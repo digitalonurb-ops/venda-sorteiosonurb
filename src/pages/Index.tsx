@@ -249,11 +249,11 @@ const addPackage = (qty: number) => {
             <span className="text-sm font-semibold text-primary">Promoção</span>
             <span className="text-xs text-muted-foreground">Compre agora e pague mais barato!</span>
           </div>
-          <div className="w-full flex items-center justify-center gap-3 bg-primary/10 border border-primary/30 rounded-lg px-4 py-1.5 pointer-events-none select-none">
+            <div className="w-full flex items-center justify-center gap-3 bg-primary/10 rounded-lg px-4 py-1.5 pointer-events-none select-none laser-border">
             <span className="text-sm text-muted-foreground line-through">R$ 0,05</span>
             <span className="text-xs text-muted-foreground">por apenas</span>
             <span className="text-base font-bold text-primary">R$ 0,03</span>
-            <span className="bg-promo text-foreground text-[10px] px-2 py-0.5 rounded-full font-bold">-40%</span>
+              <span className="bg-primary/20 text-foreground text-[10px] px-2 py-0.5 rounded-full font-bold">-40%</span>
           </div>
         </div>
 
