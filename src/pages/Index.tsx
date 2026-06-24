@@ -119,7 +119,7 @@ const addPackage = (qty: number) => {
           <div className="relative w-full h-6 rounded-lg overflow-hidden"
             style={{ background: "#0f2a1a" }}>
             <div
-              className="h-full rounded-lg transition-all duration-700"
+              className="h-full rounded-lg transition-all duration-700 lightsaber-effect"
               style={{
                 width: `${siteSettings.progress_bar.porcentagem}%`,
                 background: "linear-gradient(90deg, #14532d 0%, #16a34a 60%, #4ade80 100%)",
