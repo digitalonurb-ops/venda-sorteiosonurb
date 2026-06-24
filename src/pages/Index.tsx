@@ -90,7 +90,7 @@ const addPackage = (qty: number) => {
 
   .neon-btn { animation: neon-pulse 2s ease-in-out infinite; }
   .popular-badge { animation: popular-pulse 1.8s ease-in-out infinite; }
-  .promo-banner { animation: promo-pulse 2s ease-in-out infinite; }
+  .promo-banner { box-shadow: none; }
 `}</style>
 
       {/* Header */}
