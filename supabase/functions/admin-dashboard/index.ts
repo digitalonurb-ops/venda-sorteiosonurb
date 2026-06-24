@@ -31,13 +31,38 @@ function getSupabase() {
   );
 }
 
-// Verifica se o JWT do Supabase Auth é válido usando o service role
+// Verifica o JWT do Supabase Auth manualmente usando SUPABASE_JWT_SECRET
+// (essa variável é sempre injetada automaticamente em edge functions do Supabase)
 async function verifySupabaseJWT(jwt: string): Promise<boolean> {
   if (!jwt) return false;
   try {
-    const supabase = getSupabase();
-    const { data, error } = await supabase.auth.getUser(jwt);
-    return !error && !!data?.user;
+    const parts = jwt.split(".");
+    if (parts.length !== 3) return false;
+
+    // Decodifica o payload (base64url → JSON)
+    const base64url = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const payload = JSON.parse(atob(base64url));
+
+    // Verifica expiração
+    if (payload.exp && payload.exp * 1000 < Date.now()) return false;
+
+    // Verifica a assinatura com SUPABASE_JWT_SECRET
+    const secret = Deno.env.get("SUPABASE_JWT_SECRET")!;
+    if (!secret) return false;
+
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      "raw", encoder.encode(secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false, ["verify"]
+    );
+
+    // A assinatura do JWT usa base64url
+    const sigBase64url = parts[2].replace(/-/g, "+").replace(/_/g, "/");
+    const sigBytes = Uint8Array.from(atob(sigBase64url), c => c.charCodeAt(0));
+    const dataToVerify = encoder.encode(`${parts[0]}.${parts[1]}`);
+
+    return await crypto.subtle.verify("HMAC", key, sigBytes, dataToVerify);
   } catch {
     return false;
   }
