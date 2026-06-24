@@ -31,11 +31,31 @@ function getSupabase() {
   );
 }
 
-function authCheckCredentials(username: string, password: string): boolean {
+// Cria um cliente Supabase com a anon key (para autenticação de usuários)
+function getSupabaseAnon() {
+  return createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_ANON_KEY")!
+  );
+}
+
+async function authCheckCredentials(email: string, password: string): Promise<boolean> {
+  if (!email || !password) return false;
+
+  // Tenta primeiro via variáveis de ambiente (fallback legado)
   const envUser = Deno.env.get("ADMIN_USERNAME");
   const envPass = Deno.env.get("ADMIN_PASSWORD");
-  if (!envUser || !envPass) return false;
-  return !!username && !!password && username === envUser && password === envPass;
+  if (envUser && envPass && email === envUser && password === envPass) return true;
+
+  // Autenticação via Supabase Auth (usuários criados no dashboard)
+  try {
+    const anonClient = getSupabaseAnon();
+    const { data, error } = await anonClient.auth.signInWithPassword({ email, password });
+    if (error || !data?.user) return false;
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function generateToken(): Promise<string> {
@@ -251,7 +271,9 @@ Deno.serve(async (req) => {
 
     // ─── AUTH CHECK (token or credentials) ───
     const { token } = body;
-    const isAuthed = token ? await verifyToken(token) : authCheckCredentials(username, password);
+    // Suporta 'email' ou 'username' para compatibilidade
+    const loginEmail = body.email || username;
+    const isAuthed = token ? await verifyToken(token) : await authCheckCredentials(loginEmail, password);
     if (!isAuthed) {
       return new Response(JSON.stringify({ error: "Credenciais inválidas" }), {
         status: 401,
