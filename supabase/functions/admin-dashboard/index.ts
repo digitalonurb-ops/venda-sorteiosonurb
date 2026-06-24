@@ -31,36 +31,22 @@ function getSupabase() {
   );
 }
 
-// Cria um cliente Supabase com a anon key (para autenticação de usuários)
-function getSupabaseAnon() {
-  return createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_ANON_KEY")!
-  );
-}
-
-async function authCheckCredentials(email: string, password: string): Promise<boolean> {
-  if (!email || !password) return false;
-
-  // Tenta primeiro via variáveis de ambiente (fallback legado)
-  const envUser = Deno.env.get("ADMIN_USERNAME");
-  const envPass = Deno.env.get("ADMIN_PASSWORD");
-  if (envUser && envPass && email === envUser && password === envPass) return true;
-
-  // Autenticação via Supabase Auth (usuários criados no dashboard)
+// Verifica se o JWT do Supabase Auth é válido usando o service role
+async function verifySupabaseJWT(jwt: string): Promise<boolean> {
+  if (!jwt) return false;
   try {
-    const anonClient = getSupabaseAnon();
-    const { data, error } = await anonClient.auth.signInWithPassword({ email, password });
-    if (error || !data?.user) return false;
-    return true;
+    const supabase = getSupabase();
+    const { data, error } = await supabase.auth.getUser(jwt);
+    return !error && !!data?.user;
   } catch {
     return false;
   }
 }
 
+// Gera token de sessão admin (HMAC assinado com service role key)
 async function generateToken(): Promise<string> {
-  const secret = Deno.env.get("JWT_SECRET") || Deno.env.get("ADMIN_PASSWORD")!;
-  const payload = { exp: Date.now() + 30 * 60 * 1000 }; // 30 min expiry
+  const secret = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const payload = { exp: Date.now() + 4 * 60 * 60 * 1000 }; // 4h
   const payloadB64 = btoa(JSON.stringify(payload));
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
@@ -76,7 +62,7 @@ async function verifyToken(token: string): Promise<boolean> {
   try {
     const [payloadB64, sigB64] = token.split(".");
     if (!payloadB64 || !sigB64) return false;
-    const secret = Deno.env.get("JWT_SECRET") || Deno.env.get("ADMIN_PASSWORD")!;
+    const secret = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const encoder = new TextEncoder();
     const key = await crypto.subtle.importKey(
       "raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["verify"]
@@ -269,11 +255,35 @@ Deno.serve(async (req) => {
       });
     }
 
-    // ─── AUTH CHECK (token or credentials) ───
+    // ─── AUTH CHECK ───
     const { token } = body;
-    // Suporta 'email' ou 'username' para compatibilidade
-    const loginEmail = body.email || username;
-    const isAuthed = token ? await verifyToken(token) : await authCheckCredentials(loginEmail, password);
+
+    // Para action "login": usa o JWT do Supabase Auth passado no header Authorization
+    // Para demais actions: usa o token de sessão admin gerado após login
+    let isAuthed = false;
+
+    if (action === "login") {
+      // Extrai o JWT do header Authorization: "Bearer <jwt>"
+      const authHeader = req.headers.get("Authorization") || req.headers.get("authorization") || "";
+      const supabaseJWT = authHeader.replace(/^Bearer\s+/i, "").trim();
+      if (supabaseJWT) {
+        isAuthed = await verifySupabaseJWT(supabaseJWT);
+      }
+      // Fallback: variáveis de ambiente legadas (ADMIN_USERNAME / ADMIN_PASSWORD)
+      if (!isAuthed) {
+        const envUser = Deno.env.get("ADMIN_USERNAME");
+        const envPass = Deno.env.get("ADMIN_PASSWORD");
+        const loginEmail = body.email || username;
+        const password = body.password;
+        if (envUser && envPass && loginEmail === envUser && password === envPass) {
+          isAuthed = true;
+        }
+      }
+    } else {
+      // Demais actions autenticadas: verifica o token de sessão admin
+      isAuthed = token ? await verifyToken(token) : false;
+    }
+
     if (!isAuthed) {
       return new Response(JSON.stringify({ error: "Credenciais inválidas" }), {
         status: 401,
