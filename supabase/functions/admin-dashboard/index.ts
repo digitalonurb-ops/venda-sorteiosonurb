@@ -44,6 +44,10 @@ async function verifySupabaseJWT(jwt: string): Promise<boolean> {
         "apikey": serviceKey,
       },
     });
+    if (!response.ok) {
+      const text = await response.text();
+      console.error('Supabase JWT verification failed:', response.status, text);
+    }
     return response.ok;
   } catch {
     return false;
