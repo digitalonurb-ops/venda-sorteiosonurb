@@ -86,14 +86,14 @@ const Resumo = () => {
               <ArrowLeft size={20} />
             </button>
             <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-            <h1 className="text-lg font-bold text-primary">Onurb Garage | Campanhas</h1>
+            <h1 className="text-lg font-bold text-primary">Seu Sorteio | Campanhas</h1>
           </div>
         </header>
 
         <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
           <div className="text-center space-y-1">
             <ShoppingCart size={32} className="text-primary mx-auto" />
-            <h2 className="text-xl font-bold text-foreground">📋Informações da Compra📋</h2>
+            <h2 className="text-xl font-bold text-foreground">Informações da Compra</h2>
           </div>
 
           <div className="bg-card border border-border rounded-xl p-4 space-y-4">
@@ -130,13 +130,13 @@ const Resumo = () => {
             style={{ animation: "cyanPulse 1.6s ease-in-out infinite" }}
             className="w-full bg-primary text-primary-foreground font-bold py-3.5 rounded-lg hover:brightness-110 transition-all duration-300 shadow-[0_0_24px_rgba(34,211,238,0.45)]"
           >
-            Finalizar Pagamento
+            Realizar o Pagamento
           </button>
         </main>
 
         <footer className="max-w-lg mx-auto px-4 py-4 text-center">
-          <p className="text-xs text-muted-foreground">ONURB SERVIÇOS DIGITAIS LTDA</p>
-          <p className="text-xs text-muted-foreground">2024-2026</p>
+          <p className="text-xs text-muted-foreground">Desenvolvido por</p>
+          <p className="text-xs text-muted-foreground">ONURB DIGITAL</p>
         </footer>
       </div>
     </>
