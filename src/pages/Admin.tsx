@@ -471,7 +471,7 @@ const Admin = () => {
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-primary">Painel Admin</h1>
+          <h1 className="text-xl font-bold text-primary">Painel Administrativo</h1>
           <div className="flex items-center gap-3">
             <button onClick={() => { loadDashboard(); if (activeTab === "prizes") loadPrizeQuotas(); if (activeTab === "promotions") loadPromotions(); }}
               disabled={loading} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
@@ -486,10 +486,10 @@ const Admin = () => {
       {/* Tabs */}
       <div className="max-w-7xl mx-auto px-4 pt-4">
         <div className="flex gap-1 bg-secondary/50 rounded-lg p-1 overflow-x-auto">
-          {([["dashboard", "Dashboard", <ShoppingCart size={14} key="d" />],
+          {([["dashboard", "Painel Principal", <ShoppingCart size={14} key="d" />],
              ["prizes", "Cotas Premiadas", <Award size={14} key="p" />],
              ["promotions", "Promoções", <Megaphone size={14} key="m" />],
-             ["lookup", "Consultar Cota", <Search size={14} key="l" />],
+             ["lookup", "Buscar Cotas", <Search size={14} key="l" />],
              ["settings", "Configurações", <Palette size={14} key="s" />]] as const).map(([key, label, icon]) => (
             <button key={key} onClick={() => setActiveTab(key as any)}
               className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
@@ -691,16 +691,16 @@ const Admin = () => {
                 <h3 className="font-bold">Nova Promoção</h3>
                 <div><label className="text-xs text-muted-foreground">Título</label>
                   <input value={promoForm.titulo} onChange={(e) => setPromoForm({ ...promoForm, titulo: e.target.value })}
-                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Cotas em dobro!" /></div>
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="ex: Cotas em dobro!" /></div>
                 <div><label className="text-xs text-muted-foreground">Texto da Promoção (exibido na página inicial)</label>
                   <textarea value={promoForm.descricao} onChange={(e) => setPromoForm({ ...promoForm, descricao: e.target.value })}
                     className="w-full rounded border border-border bg-secondary px-3 py-2 text-sm text-foreground min-h-[80px]" placeholder="Compre 100 cotas e ganhe mais 100 grátis!" /></div>
                 <div><label className="text-xs text-muted-foreground">Duração da promoção (minutos) — deixe vazio para sem limite</label>
                   <input type="number" value={promoForm.timer_minutos} onChange={(e) => setPromoForm({ ...promoForm, timer_minutos: e.target.value })}
-                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: 60 (1 hora)" /></div>
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: 60 = 1 hora" /></div>
                 <label className="flex items-center gap-2 text-sm cursor-pointer">
                   <input type="checkbox" checked={promoForm.cotas_dobro} onChange={(e) => setPromoForm({ ...promoForm, cotas_dobro: e.target.checked })} />
-                  Cotas em dobro
+                  Ativar Cotas em Dobro
                 </label>
                 <div className="flex gap-2">
                   <button onClick={createPromo} className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold">Criar</button>
@@ -825,7 +825,7 @@ const Admin = () => {
                   {progressBar.ativa ? <ToggleRight size={28} /> : <ToggleLeft size={28} />}
                 </button>
               </div>
-              <p className="text-sm text-muted-foreground">Exibe uma barra de progresso.</p>
+              <p className="text-sm text-muted-foreground">Exibe uma barra de progresso na página da campanha.</p>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Porcentagem: {progressBar.porcentagem}%</label>
                 <input type="range" min="0.01" max="100" step="0.01" value={progressBar.porcentagem}
@@ -865,7 +865,7 @@ const Admin = () => {
                   {banner.ativa ? <ToggleRight size={28} /> : <ToggleLeft size={28} />}
                 </button>
               </div>
-              <p className="text-sm text-muted-foreground">Exibe um mini banner.</p>
+              <p className="text-sm text-muted-foreground">Exibe um mini banner sobre as imagens.</p>
               <div className="space-y-3">
                 <div>
                   <label className="text-xs text-muted-foreground">Texto do Banner</label>
