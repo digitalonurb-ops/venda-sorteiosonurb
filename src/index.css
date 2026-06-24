@@ -83,12 +83,42 @@
 }
 
 @layer utilities {
+  /* Laser border animation */
+  @property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+  @keyframes spin {
+    from { --angle: 0deg; }
+    to { --angle: 360deg; }
+  }
+  .laser-border {
+    position: relative;
+    overflow: hidden;
+  }
+  .laser-border::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: conic-gradient(from var(--angle), transparent 0%, #3b82f6 50%, transparent 100%);
+    filter: blur(2px);
+    animation: spin 3s linear infinite;
+    pointer-events: none;
+  }
   .lightsaber-effect {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    position: relative;
+    overflow: hidden;
+  }
+  .lightsaber-effect::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
     background-size: 200% 100%;
     animation: lightsaber 4s linear infinite;
     mix-blend-mode: screen;
-    outline: 2px solid magenta; /* debug visual */
   }
 }
 
