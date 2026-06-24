@@ -100,7 +100,7 @@ const Admin = () => {
         return;
       }
 
-      // Passo 2: obter token de sessão admin passando o JWT do Supabase no header
+      // Passo 2: obter token de sessão admin passando o JWT no body
       // Usamos fetch nativo para garantir que o Authorization não seja sobrescrito
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -109,14 +109,13 @@ const Admin = () => {
         headers: {
           "Content-Type": "application/json",
           "apikey": anonKey,
-          "Authorization": `Bearer ${authData.session.access_token}`,
         },
-        body: JSON.stringify({ action: "login" }),
+        body: JSON.stringify({ action: "login", supabase_jwt: authData.session.access_token }),
       });
       const res = await resp.json();
 
       if (res?.error) {
-        setError(res.error);
+        setError(`Erro: ${res.error}${res.debug ? ` (${res.debug})` : ""}`);
       } else if (res?.success && res?.token) {
         setIsLoggedIn(true);
         sessionStorage.setItem("admin_token", res.token);
