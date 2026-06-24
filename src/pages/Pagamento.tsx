@@ -192,10 +192,10 @@ const Pagamento = () => {
           <div className="text-center space-y-2">
             <CheckCircle size={48} className="text-primary mx-auto" />
             <h2 className="text-xl font-bold text-foreground">Pagamento Confirmado!</h2>
-            <p className="text-sm text-muted-foreground">🍀Suas cotas da sorte foram geradas!🍀</p>
+            <p className="text-sm text-muted-foreground">Suas cotas da sorte foram geradas!</p>
           </div>
           <div className="bg-card border border-border rounded-xl p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">📋Dados da Compra📋</h3>
+            <h3 className="text-sm font-semibold text-foreground">Dados da Compra</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <span className="text-muted-foreground">Nome:</span><span className="text-foreground font-medium">{nome}</span>
               <span className="text-muted-foreground">Celular:</span><span className="text-foreground font-medium">{celular}</span>
@@ -237,7 +237,7 @@ const Pagamento = () => {
           <div className="max-w-lg mx-auto px-4 py-2 flex items-center gap-3">
             <button onClick={() => navigate(-1)} className="text-muted-foreground"><ArrowLeft size={20} /></button>
             <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-            <h1 className="text-lg font-bold text-primary">Onurb Garage | Campanhas</h1>
+            <h1 className="text-lg font-bold text-primary"> Seu Sorteio | Campanhas</h1>
           </div>
         </header>
 
@@ -298,8 +298,8 @@ const Pagamento = () => {
         </main>
 
         <footer className="max-w-lg mx-auto px-4 py-4 text-center">
-          <p className="text-xs text-muted-foreground">ONURB SERVIÇOS DIGITAIS LTDA</p>
-          <p className="text-xs text-muted-foreground">2024-2026</p>
+          <p className="text-xs text-muted-foreground">Desenvolvido por</p>
+          <p className="text-xs text-muted-foreground">ONURB DIGITAL</p>
         </footer>
       </div>
     </>
