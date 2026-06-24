@@ -88,6 +88,7 @@
     background-size: 200% 100%;
     animation: lightsaber 4s linear infinite;
     mix-blend-mode: screen;
+    outline: 2px solid magenta; /* debug visual */
   }
 }
 
