@@ -98,7 +98,7 @@ const addPackage = (qty: number) => {
   <div className="max-w-lg mx-auto px-4 py-2 flex items-center justify-between gap-3">
     <div className="flex items-center gap-3">
       <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-      <h1 className="text-lg font-bold text-primary">Onurb Garage | Campanhas</h1>
+      <h1 className="text-lg font-bold text-primary">Seu Sorteio | Campanhas</h1>
     </div>
     <button
       onClick={() => navigate("/campanhas")}
@@ -145,7 +145,7 @@ const addPackage = (qty: number) => {
           <div className="fixed inset-0 z-[60] bg-black/60 flex items-center justify-center p-4">
             <div className="bg-card border border-border rounded-xl p-5 w-full max-w-sm space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-foreground font-semibold">Minhas Cotas</h3>
+                <h3 className="text-foreground font-semibold">Minhas Compras</h3>
                 <button onClick={() => setShowTitulos(false)} className="text-muted-foreground">
                   <X size={20} />
                 </button>
@@ -194,14 +194,14 @@ const addPackage = (qty: number) => {
                     <Loader2 size={14} className="animate-spin" /> Buscando...
                   </>
                 ) : (
-                  "Buscar Compras"
+                  "Buscar"
                 )}
               </button>
 
               {meusOrders !== null && (
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                   {meusOrders.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center">Nenhuma compra encontrada.</p>
+                    <p className="text-sm text-muted-foreground text-center">Nenhuma compra encontrada!</p>
                   ) : (
                     meusOrders.map((order: any) => (
                       <div key={order.id} className="bg-background border border-border rounded-lg p-3 space-y-2">
@@ -508,8 +508,8 @@ const addPackage = (qty: number) => {
       </main>
 
       <footer className="max-w-lg mx-auto px-4 py-4 text-center">
-        <p className="text-xs text-muted-foreground">ONURB SERVIÇOS DIGITAIS LTDA</p>
-        <p className="text-xs text-muted-foreground">2024-2026</p>
+        <p className="text-xs text-muted-foreground">Desenvolvido por</p>
+        <p className="text-xs text-muted-foreground">ONURB DIGITAL</p>
       </footer>
     </div>
   );
