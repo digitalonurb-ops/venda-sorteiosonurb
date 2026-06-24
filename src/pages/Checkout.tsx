@@ -78,7 +78,7 @@ const Checkout = () => {
               <ArrowLeft size={20} />
             </button>
             <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-            <h1 className="text-lg font-bold text-primary">Onurb Garage | Campanhas</h1>
+            <h1 className="text-lg font-bold text-primary">Seu Sorteio | Campanhas</h1>
           </div>
         </header>
 
@@ -136,8 +136,8 @@ const Checkout = () => {
         </main>
 
         <footer className="max-w-lg mx-auto px-4 py-4 text-center">
-          <p className="text-xs text-muted-foreground">ONURB SERVIÇOS DIGITAIS LTDA</p>
-          <p className="text-xs text-muted-foreground">2024-2026</p>
+          <p className="text-xs text-muted-foreground">Desenvolvido por</p>
+          <p className="text-xs text-muted-foreground">ONURB DIGITAL</p>
         </footer>
       </div>
     </>
