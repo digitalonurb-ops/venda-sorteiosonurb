@@ -76,37 +76,77 @@
   animation: banner-blink 1.8s ease-in-out infinite;
 }
 
-/* Lightsaber effect for progress bar */
+/* Lightsaber effect for progress bar — seamless sweep */
 @keyframes lightsaber {
-  0% { background-position: -150% 0; }
-  100% { background-position: 150% 0; }
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
 }
 
 @layer utilities {
-  /* Laser border animation */
-  @property --angle {
-    syntax: "<angle>";
-    initial-value: 0deg;
-    inherits: false;
+  /* ── Perimeter laser border for promo card ── */
+  /* We draw 4 pseudo-border segments and animate background-position
+     so a short blue streak travels: top-left → right → bottom-right → left → back */
+  @keyframes laser-travel {
+    0%   { background-position: 0% 0%; }
+    100% { background-position: 400% 0%; }
   }
-  @keyframes spin {
-    from { --angle: 0deg; }
-    to { --angle: 360deg; }
-  }
+
   .laser-border {
     position: relative;
-    overflow: hidden;
   }
-  .laser-border::before {
+  /* Top edge */
+  .laser-border::before,
+  .laser-border::after {
     content: "";
     position: absolute;
-    inset: -2px;
-    border-radius: inherit;
-    background: conic-gradient(from var(--angle), transparent 0%, #3b82f6 50%, transparent 100%);
-    filter: blur(2px);
-    animation: spin 3s linear infinite;
     pointer-events: none;
+    border-radius: inherit;
   }
+  /* Travelling line using conic approach — clean perimeter sweep */
+  .laser-border::before {
+    inset: 0;
+    background: transparent;
+    /* thin cyan-blue border always visible as base */
+    border: 2px solid rgba(0,200,255,0.25);
+    border-radius: inherit;
+    z-index: 1;
+  }
+  .laser-border::after {
+    /* The laser streak: a narrow bright segment sweeping around the perimeter */
+    inset: -1px;
+    border-radius: inherit;
+    background: transparent;
+    border: 2px solid transparent;
+    /* Use background-clip border-box trick */
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0,200,255,0) 30%,
+      rgba(0,200,255,1) 48%,
+      rgba(150,240,255,1) 50%,
+      rgba(0,200,255,1) 52%,
+      rgba(0,200,255,0) 70%,
+      transparent 100%
+    );
+    background-size: 300% 300%;
+    animation: laser-sweep 3s linear infinite;
+    mask-image: linear-gradient(transparent, transparent);
+    /* Clip to border only */
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    padding: 2px;
+    z-index: 2;
+  }
+
+  @keyframes laser-sweep {
+    0%   { background-position: 200% 0%; }
+    100% { background-position: -200% 0%; }
+  }
+
+  /* ── Lightsaber (progress bar) — seamless, no visible restart ── */
   .lightsaber-effect {
     position: relative;
     overflow: hidden;
@@ -114,10 +154,12 @@
   .lightsaber-effect::before {
     content: "";
     position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-    background-size: 200% 100%;
-    animation: lightsaber 4s linear infinite;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
+    animation: lightsaber 3s ease-in-out infinite;
     mix-blend-mode: screen;
   }
 }
