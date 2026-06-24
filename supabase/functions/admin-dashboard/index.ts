@@ -299,8 +299,8 @@ Deno.serve(async (req) => {
       }
     } else {
       // Demais actions autenticadas: verifica o token de sessão admin
-      isAuthed = token ? await verifySupabaseJWT(token) : false;
-      authDebug = isAuthed ? "jwt_ok" : "jwt_invalid";
+      isAuthed = token ? await verifyToken(token) : false;
+      authDebug = isAuthed ? "token_ok" : "token_invalid";
     }
 
     if (!isAuthed) {
