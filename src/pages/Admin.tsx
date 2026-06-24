@@ -88,24 +88,49 @@ const Admin = () => {
   const handleLogin = async () => {
     setLoading(true); setError("");
     try {
-      const { data: res, error: err } = await supabase.functions.invoke("admin-dashboard", {
-        body: { email, username: email, password, action: "login" },
+      // Passo 1: autenticar diretamente no Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-      if (err || res?.error) {
-        setError(res?.error || "E-mail ou senha incorretos.");
+
+      if (authError || !authData?.session) {
+        setError("E-mail ou senha incorretos.");
+        setLoading(false);
+        return;
+      }
+
+      // Passo 2: obter token de sessão admin passando o JWT do Supabase no header
+      // Usamos fetch nativo para garantir que o Authorization não seja sobrescrito
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const resp = await fetch(`${supabaseUrl}/functions/v1/admin-dashboard`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": anonKey,
+          "Authorization": `Bearer ${authData.session.access_token}`,
+        },
+        body: JSON.stringify({ action: "login" }),
+      });
+      const res = await resp.json();
+
+      if (res?.error) {
+        setError(res.error);
       } else if (res?.success && res?.token) {
         setIsLoggedIn(true);
         sessionStorage.setItem("admin_token", res.token);
         setEmail(""); setPassword("");
         loadDashboard();
       } else {
-        setError("E-mail ou senha incorretos.");
+        setError("Erro ao acessar painel.");
       }
     } catch {
       setError("Erro ao conectar. Tente novamente.");
     }
     setLoading(false);
   };
+
 
   const loadDashboard = async () => {
     setLoading(true);
