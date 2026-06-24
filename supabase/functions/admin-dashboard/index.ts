@@ -141,15 +141,16 @@ Deno.serve(async (req) => {
 
       const now = new Date();
       const activePromos = (promoData || []).filter((p: any) => {
-        if (p.timer_minutos && p.ativado_em) {
+        if (p.timer_minutos) {
+          // Se houver tempo definido, é necessário também ter a data de ativação.
+          // Caso ativado_em esteja null, consideramos a promoção inativa.
+          if (!p.ativado_em) return false;
           const expiresAt = new Date(new Date(p.ativado_em).getTime() + p.timer_minutos * 60 * 1000);
           return now < expiresAt;
         }
+        // Sem timer, a promoção permanece ativa enquanto o campo 'ativa' for true.
         return true;
-      });
-
-      // Site settings
-      const { data: settingsData } = await supabase.from("site_settings").select("key, value");
+      });const { data: settingsData } = await supabase.from("site_settings").select("key, value");
       const settings: Record<string, any> = {};
       for (const row of (settingsData || [])) {
         settings[row.key] = row.value;
