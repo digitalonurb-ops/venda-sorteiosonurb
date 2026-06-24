@@ -355,11 +355,11 @@ const Admin = () => {
           <h1 className="text-2xl font-bold text-foreground text-center mb-6">Acesso Restrito</h1>
           {error && <div className="bg-destructive/10 text-destructive text-sm rounded-lg p-3 mb-4">{error}</div>}
           <div className="space-y-4">
-            <input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)}
+            <input type="email" placeholder="insira seu usuário" value={email} onChange={(e) => setEmail(e.target.value)}
               className="w-full h-11 rounded-lg border border-border bg-secondary px-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               onKeyDown={(e) => e.key === "Enter" && handleLogin()} />
             <div className="relative">
-              <input type={showPassword ? "text" : "password"} placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)}
+              <input type={showPassword ? "text" : "password"} placeholder="insira sua senha" value={password} onChange={(e) => setPassword(e.target.value)}
                 className="w-full h-11 rounded-lg border border-border bg-secondary px-4 pr-11 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 onKeyDown={(e) => e.key === "Enter" && handleLogin()} />
               <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
