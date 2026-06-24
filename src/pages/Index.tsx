@@ -249,7 +249,7 @@ const addPackage = (qty: number) => {
             <span className="text-sm font-semibold text-primary">Promoção</span>
             <span className="text-xs text-muted-foreground">Compre agora e pague mais barato!</span>
           </div>
-            <div className="w-full flex items-center justify-center gap-3 bg-primary/10 rounded-lg px-4 py-1.5 pointer-events-none select-none laser-border">
+            <div className="w-full flex items-center justify-center gap-3 bg-primary/10 border border-primary/30 rounded-lg px-4 py-1.5 pointer-events-none select-none">
             <span className="text-sm text-muted-foreground line-through">R$ 0,05</span>
             <span className="text-xs text-muted-foreground">por apenas</span>
             <span className="text-base font-bold text-primary">R$ 0,03</span>
@@ -276,7 +276,7 @@ const addPackage = (qty: number) => {
             {activePromotions.map((promo, i) => (
               <div
                 key={i}
-                className="promo-banner w-full rounded-lg px-4 py-3 text-center font-bold text-sm"
+                className="laser-border promo-banner w-full rounded-lg px-4 py-3 text-center font-bold text-sm"
                 style={{ backgroundColor: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }}
               >
                 <div className="flex items-center justify-center gap-2">
