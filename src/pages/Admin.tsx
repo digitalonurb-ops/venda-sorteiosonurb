@@ -33,7 +33,7 @@ const TOTAL_COTAS = 999999;
 
 const Admin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -89,20 +89,20 @@ const Admin = () => {
     setLoading(true); setError("");
     try {
       const { data: res, error: err } = await supabase.functions.invoke("admin-dashboard", {
-        body: { username, password, action: "login" },
+        body: { email, username: email, password, action: "login" },
       });
       if (err || res?.error) {
-        setError(res?.error || "kkkk tente denovo pateta!");
+        setError(res?.error || "E-mail ou senha incorretos.");
       } else if (res?.success && res?.token) {
         setIsLoggedIn(true);
         sessionStorage.setItem("admin_token", res.token);
-        setUsername(""); setPassword("");
+        setEmail(""); setPassword("");
         loadDashboard();
       } else {
-        setError("kkkk tente denovo pateta!");
+        setError("E-mail ou senha incorretos.");
       }
     } catch {
-      setError("kkkk tente denovo pateta!");
+      setError("Erro ao conectar. Tente novamente.");
     }
     setLoading(false);
   };
@@ -182,7 +182,7 @@ const Admin = () => {
 
   const handleLogout = () => {
     sessionStorage.removeItem("admin_token"); setIsLoggedIn(false); setData(null);
-    setUsername(""); setPassword("");
+    setEmail(""); setPassword("");
   };
 
   const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -328,10 +328,10 @@ const Admin = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="w-full max-w-sm bg-card rounded-2xl p-8 shadow-2xl border border-border">
-          <h1 className="text-2xl font-bold text-foreground text-center mb-6">Curioso, vaza!</h1>
+          <h1 className="text-2xl font-bold text-foreground text-center mb-6">Acesso Restrito</h1>
           {error && <div className="bg-destructive/10 text-destructive text-sm rounded-lg p-3 mb-4">{error}</div>}
           <div className="space-y-4">
-            <input type="text" placeholder="Usuário" value={username} onChange={(e) => setUsername(e.target.value)}
+            <input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)}
               className="w-full h-11 rounded-lg border border-border bg-secondary px-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               onKeyDown={(e) => e.key === "Enter" && handleLogin()} />
             <div className="relative">
@@ -342,7 +342,7 @@ const Admin = () => {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            <button onClick={handleLogin} disabled={loading || !username || !password}
+            <button onClick={handleLogin} disabled={loading || !email || !password}
               className="w-full h-11 rounded-lg bg-primary text-primary-foreground font-bold disabled:opacity-50">
               {loading ? "Entrando..." : "Entrar"}
             </button>
