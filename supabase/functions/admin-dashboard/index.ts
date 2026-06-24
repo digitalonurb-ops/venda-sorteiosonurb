@@ -269,31 +269,38 @@ Deno.serve(async (req) => {
     // Para action "login": usa o JWT do Supabase Auth passado no header Authorization
     // Para demais actions: usa o token de sessão admin gerado após login
     let isAuthed = false;
+    let authDebug = "";
 
     if (action === "login") {
-      // Extrai o JWT do header Authorization: "Bearer <jwt>"
-      const authHeader = req.headers.get("Authorization") || req.headers.get("authorization") || "";
-      const supabaseJWT = authHeader.replace(/^Bearer\s+/i, "").trim();
+      // JWT passado no corpo da requisição (mais confiável que o header)
+      const supabaseJWT = body.supabase_jwt || "";
+
       if (supabaseJWT) {
         isAuthed = await verifySupabaseJWT(supabaseJWT);
+        authDebug = isAuthed ? "jwt_ok" : "jwt_invalid";
+      } else {
+        authDebug = "no_jwt";
       }
+
       // Fallback: variáveis de ambiente legadas (ADMIN_USERNAME / ADMIN_PASSWORD)
       if (!isAuthed) {
         const envUser = Deno.env.get("ADMIN_USERNAME");
         const envPass = Deno.env.get("ADMIN_PASSWORD");
-        const loginEmail = body.email || username;
-        const password = body.password;
-        if (envUser && envPass && loginEmail === envUser && password === envPass) {
+        const loginEmail = body.email || body.username || "";
+        const loginPass = body.password || "";
+        if (envUser && envPass && loginEmail === envUser && loginPass === envPass) {
           isAuthed = true;
+          authDebug = "env_creds_ok";
         }
       }
     } else {
       // Demais actions autenticadas: verifica o token de sessão admin
-      isAuthed = token ? await verifyToken(token) : false;
+      isAuthed = token ? await verifySupabaseJWT(token) : false;
+      authDebug = isAuthed ? "jwt_ok" : "jwt_invalid";
     }
 
     if (!isAuthed) {
-      return new Response(JSON.stringify({ error: "Credenciais inválidas" }), {
+      return new Response(JSON.stringify({ error: "Credenciais inválidas", debug: authDebug }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -306,6 +313,7 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
 
     // ─── DASHBOARD ───
     if (action === "dashboard") {
