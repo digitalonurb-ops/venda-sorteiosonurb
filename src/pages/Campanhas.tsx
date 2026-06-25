@@ -62,7 +62,7 @@ const Campanhas = () => {
             <div className="p-4 space-y-3">
               <div>
                 <p className="font-bold text-foreground">{cfg.campaignName}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Essa é pra acabar rápido!</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Vai acabar rápido!</p>
               </div>
               <div className="flex items-center justify-between">
                 <span
@@ -70,7 +70,7 @@ const Campanhas = () => {
                   className="flex items-center gap-2 bg-primary text-primary-foreground text-sm font-bold px-4 py-2 rounded-lg shadow-[0_0_16px_rgba(34,211,238,0.4)]"
                 >
                   <ShoppingCart size={14} />
-                  Adquira Já!
+                  Participe Agora!
                 </span>
                 <span className="text-xs text-muted-foreground">Em andamento</span>
               </div>
