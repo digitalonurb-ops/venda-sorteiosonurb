@@ -14,9 +14,9 @@ export interface CampanhaAnterior {
   nomeGanhador: string;
 }
 
-export const DEFAULT_SITE_TITLE = "Seu Sorteio | Campanhas";
-export const DEFAULT_CAMPAIGN_NAME = "20.000,00 no seu PIX!";
-export const DEFAULT_PRIZE_BANNER = "SÃO 20 MIL REAIS DIRETO NO SEU PIX!";
+export const DEFAULT_SITE_TITLE = "Campanhas";
+export const DEFAULT_CAMPAIGN_NAME = "Esse prêmio vai ser seu!";
+export const DEFAULT_PRIZE_BANNER = "Corra e participe!";
 export const DEFAULT_TOTAL_COTAS = 999999;
 
 export const DEFAULT_QUANTITY_OPTIONS: QuantityOption[] = [
