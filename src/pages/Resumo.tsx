@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import logo from "@/assets/logo-onurb.webp";
+import logo from "@/assets/logotopo.png";
 import novologoOD from "@/assets/novologoOD.png";
 import { useSiteSettings } from "@/lib/siteSettings";
 
