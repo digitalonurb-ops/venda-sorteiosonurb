@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, User, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo-onurb.webp";
+import { useSiteSettings } from "@/lib/siteSettings";
 
 const formatPhone = (value: string): string => {
   const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -14,6 +15,7 @@ const formatPhone = (value: string): string => {
 const Checkout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const cfg = useSiteSettings();
 
   const { quantity, total } =
     (location.state as { quantity: number; total: string }) || {
@@ -78,7 +80,7 @@ const Checkout = () => {
               <ArrowLeft size={20} />
             </button>
             <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-            <h1 className="text-lg font-bold text-primary">Seu Sorteio | Campanhas</h1>
+            <h1 className="text-lg font-bold text-primary">{cfg.siteTitle}</h1>
           </div>
         </header>
 

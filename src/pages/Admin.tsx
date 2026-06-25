@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   Eye, EyeOff, LogOut, Users, CreditCard, TrendingUp, ShoppingCart,
   DollarSign, Trash2, Edit, ChevronLeft, Plus, X, Award, Megaphone,
   ToggleLeft, ToggleRight, Lock, Unlock, Save, Clock, RefreshCw,
   BarChart3, Type, Palette, Search, PackageOpen,
+  Image as ImageIcon, Trophy, Upload, ListOrdered, FileText, Tag, Hash,
 } from "lucide-react";
+import {
+  DEFAULT_SITE_TITLE, DEFAULT_CAMPAIGN_NAME, DEFAULT_PRIZE_BANNER,
+  DEFAULT_TOTAL_COTAS, DEFAULT_QUANTITY_OPTIONS, DEFAULT_REGULAMENTO,
+  type QuantityOption, type CampanhaAnterior,
+} from "@/lib/siteSettings";
 
 // ─── Types ───
 interface Order {
@@ -41,7 +48,7 @@ const Admin = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [revenueFilter, setRevenueFilter] = useState<"day" | "week" | "month" | "total">("total");
   const [statusFilter, setStatusFilter] = useState<"all" | "paid" | "pending" | "cancelled">("all");
-  const [activeTab, setActiveTab] = useState<"dashboard" | "prizes" | "promotions" | "settings" | "lookup">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "prizes" | "promotions" | "settings" | "lookup" | "images" | "campanhas">("dashboard");
 
   // Lookup quota
   const [lookupNumero, setLookupNumero] = useState("");
@@ -70,6 +77,17 @@ const Admin = () => {
   // Site Settings
   const [progressBar, setProgressBar] = useState({ ativa: false, porcentagem: 50 });
   const [banner, setBanner] = useState({ ativa: false, texto: "Adquira Já!", cor: "#facc15", cor_texto: "#000000" });
+  const [siteTitle, setSiteTitle] = useState(DEFAULT_SITE_TITLE);
+  const [campaignName, setCampaignName] = useState(DEFAULT_CAMPAIGN_NAME);
+  const [prizeBanner, setPrizeBanner] = useState(DEFAULT_PRIZE_BANNER);
+  const [totalCotas, setTotalCotas] = useState<number>(DEFAULT_TOTAL_COTAS);
+  const [quantityOptions, setQuantityOptions] = useState<QuantityOption[]>(DEFAULT_QUANTITY_OPTIONS);
+  const [regulamento, setRegulamento] = useState(DEFAULT_REGULAMENTO);
+  const [bannerImages, setBannerImages] = useState<string[]>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [campanhasAnteriores, setCampanhasAnteriores] = useState<CampanhaAnterior[]>([]);
+  const [campForm, setCampForm] = useState<CampanhaAnterior>({ nome: "", descricao: "", imagem: "", data: "", cotaGanhadora: "", nomeGanhador: "" });
+  const [uploadingCampImg, setUploadingCampImg] = useState(false);
 
   const creds = () => {
     const token = sessionStorage.getItem("admin_token");
@@ -185,15 +203,24 @@ const Admin = () => {
     if (!isLoggedIn) return;
     if (activeTab === "prizes") loadPrizeQuotas();
     if (activeTab === "promotions") loadPromotions();
-    if (activeTab === "settings") loadSiteSettings();
+    if (activeTab === "settings" || activeTab === "images" || activeTab === "campanhas") loadSiteSettings();
   }, [activeTab, isLoggedIn]);
 
   const loadSiteSettings = async () => {
     try {
       const res = await invoke("get-site-settings");
       if (res?.settings) {
-        if (res.settings.progress_bar) setProgressBar(res.settings.progress_bar);
-        if (res.settings.banner) setBanner(res.settings.banner);
+        const s = res.settings;
+        if (s.progress_bar) setProgressBar(s.progress_bar);
+        if (s.banner) setBanner(s.banner);
+        if (s.site_title?.texto) setSiteTitle(s.site_title.texto);
+        if (s.campaign_name?.nome) setCampaignName(s.campaign_name.nome);
+        if (s.prize_banner?.texto) setPrizeBanner(s.prize_banner.texto);
+        if (s.total_cotas?.quantidade) setTotalCotas(Number(s.total_cotas.quantidade));
+        if (Array.isArray(s.quantity_options) && s.quantity_options.length > 0) setQuantityOptions(s.quantity_options);
+        if (s.regulamento?.texto?.trim()) setRegulamento(s.regulamento.texto);
+        if (Array.isArray(s.banner_images)) setBannerImages(s.banner_images);
+        if (Array.isArray(s.campanhas_anteriores)) setCampanhasAnteriores(s.campanhas_anteriores);
       }
     } catch {}
   };
@@ -202,6 +229,97 @@ const Admin = () => {
     try {
       await invoke("update-site-setting", { key, value });
     } catch {}
+  };
+
+  // Salva uma configuração e exibe confirmação (toast)
+  const saveSetting = async (key: string, value: any, label: string) => {
+    try {
+      await invoke("update-site-setting", { key, value });
+      toast.success(`${label} salvo com sucesso!`);
+      return true;
+    } catch {
+      toast.error(`Erro ao salvar ${label}. Tente novamente.`);
+      return false;
+    }
+  };
+
+  // Upload de imagem para o storage privado, retorna URL assinada de longa duração
+  const uploadToStorage = async (file: File): Promise<string> => {
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: upErr } = await supabase.storage
+      .from("campaign-images")
+      .upload(path, file, { upsert: true, contentType: file.type || undefined });
+    if (upErr) throw upErr;
+    const { data, error: signErr } = await supabase.storage
+      .from("campaign-images")
+      .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+    if (signErr || !data?.signedUrl) throw signErr || new Error("Falha ao gerar URL");
+    return data.signedUrl;
+  };
+
+  // ─── Imagens do banner ───
+  const handleBannerImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const remaining = 6 - bannerImages.length;
+    if (remaining <= 0) { toast.error("Máximo de 6 imagens atingido."); return; }
+    setUploadingImage(true);
+    try {
+      const toUpload = Array.from(files).slice(0, remaining);
+      const urls: string[] = [];
+      for (const f of toUpload) urls.push(await uploadToStorage(f));
+      const updated = [...bannerImages, ...urls];
+      setBannerImages(updated);
+      await saveSetting("banner_images", updated, "Imagens da campanha");
+    } catch {
+      toast.error("Erro ao enviar imagem. Faça login novamente se necessário.");
+    }
+    setUploadingImage(false);
+  };
+
+  const removeBannerImage = async (idx: number) => {
+    const updated = bannerImages.filter((_, i) => i !== idx);
+    setBannerImages(updated);
+    await saveSetting("banner_images", updated, "Imagens da campanha");
+  };
+
+  // ─── Campanhas anteriores ───
+  const handleCampImageUpload = async (file: File | null) => {
+    if (!file) return;
+    setUploadingCampImg(true);
+    try {
+      const url = await uploadToStorage(file);
+      setCampForm((f) => ({ ...f, imagem: url }));
+    } catch {
+      toast.error("Erro ao enviar imagem.");
+    }
+    setUploadingCampImg(false);
+  };
+
+  const addCampanhaAnterior = async () => {
+    if (!campForm.nome.trim()) { toast.error("Informe o nome da campanha."); return; }
+    const updated = [...campanhasAnteriores, campForm];
+    setCampanhasAnteriores(updated);
+    const ok = await saveSetting("campanhas_anteriores", updated, "Campanha anterior");
+    if (ok) setCampForm({ nome: "", descricao: "", imagem: "", data: "", cotaGanhadora: "", nomeGanhador: "" });
+  };
+
+  const removeCampanhaAnterior = async (idx: number) => {
+    const updated = campanhasAnteriores.filter((_, i) => i !== idx);
+    setCampanhasAnteriores(updated);
+    await saveSetting("campanhas_anteriores", updated, "Campanha anterior");
+  };
+
+  // ─── Cards de quantidade ───
+  const updateQtyOption = (idx: number, patch: Partial<QuantityOption>) => {
+    setQuantityOptions((prev) => prev.map((o, i) => (i === idx ? { ...o, ...patch } : o)));
+  };
+  const addQtyOption = () => {
+    if (quantityOptions.length >= 6) { toast.error("Máximo de 6 cards."); return; }
+    setQuantityOptions((prev) => [...prev, { qty: 100, popular: false }]);
+  };
+  const removeQtyOption = (idx: number) => {
+    setQuantityOptions((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const handleLogout = () => {
@@ -490,6 +608,8 @@ const Admin = () => {
              ["prizes", "Cotas Premiadas", <Award size={14} key="p" />],
              ["promotions", "Promoções", <Megaphone size={14} key="m" />],
              ["lookup", "Buscar Cotas", <Search size={14} key="l" />],
+             ["images", "Imagens", <ImageIcon size={14} key="i" />],
+             ["campanhas", "Campanhas anteriores", <Trophy size={14} key="c" />],
              ["settings", "Configurações", <Palette size={14} key="s" />]] as const).map(([key, label, icon]) => (
             <button key={key} onClick={() => setActiveTab(key as any)}
               className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
@@ -810,9 +930,213 @@ const Admin = () => {
           </div>
         )}
 
+        {/* ─── IMAGES TAB ─── */}
+        {activeTab === "images" && (
+          <div className="space-y-6">
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><ImageIcon size={20} className="text-primary" /> Imagens da Campanha</h2>
+              <p className="text-sm text-muted-foreground">
+                Envie até 6 imagens (JPG, PNG, WEBP). São exibidas no banner da página inicial e na campanha ativa em "Campanhas".
+                Use proporções comuns de celular (Android/iPhone), idealmente 16:9 ou 4:5.
+              </p>
+              <div className="flex items-center gap-3">
+                <label className={`bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 cursor-pointer ${(uploadingImage || bannerImages.length >= 6) ? "opacity-50 pointer-events-none" : ""}`}>
+                  {uploadingImage ? <RefreshCw size={14} className="animate-spin" /> : <Upload size={14} />}
+                  {uploadingImage ? "Enviando..." : "Enviar imagens"}
+                  <input type="file" accept="image/png,image/jpeg,image/webp" multiple className="hidden"
+                    onChange={(e) => { handleBannerImageUpload(e.target.files); e.target.value = ""; }} />
+                </label>
+                <span className="text-xs text-muted-foreground">{bannerImages.length}/6</span>
+              </div>
+              {bannerImages.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Nenhuma imagem enviada ainda.</p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {bannerImages.map((url, i) => (
+                    <div key={i} className="relative group rounded-lg overflow-hidden border border-border">
+                      <img src={url} alt={`Banner ${i + 1}`} className="w-full aspect-video object-cover" />
+                      <button onClick={() => removeBannerImage(i)}
+                        className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full w-6 h-6 flex items-center justify-center">
+                        <X size={12} />
+                      </button>
+                      <span className="absolute bottom-1 left-1 bg-background/70 text-foreground text-[10px] px-1.5 py-0.5 rounded">#{i + 1}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ─── CAMPANHAS ANTERIORES TAB ─── */}
+        {activeTab === "campanhas" && (
+          <div className="space-y-6">
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><Trophy size={20} className="text-primary" /> Nova Campanha Anterior</h2>
+              <p className="text-sm text-muted-foreground">Cadastre campanhas já encerradas. Elas aparecem na lista "Campanhas anteriores" da página Campanhas.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div><label className="text-xs text-muted-foreground">Nome da campanha</label>
+                  <input value={campForm.nome} onChange={(e) => setCampForm({ ...campForm, nome: e.target.value })}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: Nivus Highline Zero KM" /></div>
+                <div><label className="text-xs text-muted-foreground">Data</label>
+                  <input value={campForm.data} onChange={(e) => setCampForm({ ...campForm, data: e.target.value })}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: 04/04/2026 às 20:30" /></div>
+                <div className="sm:col-span-2"><label className="text-xs text-muted-foreground">Descrição (opcional)</label>
+                  <input value={campForm.descricao} onChange={(e) => setCampForm({ ...campForm, descricao: e.target.value })}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" /></div>
+                <div><label className="text-xs text-muted-foreground">Cota ganhadora</label>
+                  <input value={campForm.cotaGanhadora} onChange={(e) => setCampForm({ ...campForm, cotaGanhadora: e.target.value })}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: 022911" /></div>
+                <div><label className="text-xs text-muted-foreground">Nome do ganhador</label>
+                  <input value={campForm.nomeGanhador} onChange={(e) => setCampForm({ ...campForm, nomeGanhador: e.target.value })}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: Mateus Vilarindo" /></div>
+              </div>
+              <div className="flex items-center gap-3">
+                <label className={`bg-secondary text-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 cursor-pointer ${uploadingCampImg ? "opacity-50 pointer-events-none" : ""}`}>
+                  {uploadingCampImg ? <RefreshCw size={14} className="animate-spin" /> : <Upload size={14} />}
+                  {uploadingCampImg ? "Enviando..." : "Imagem do card"}
+                  <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden"
+                    onChange={(e) => { handleCampImageUpload(e.target.files?.[0] || null); e.target.value = ""; }} />
+                </label>
+                {campForm.imagem && <img src={campForm.imagem} alt="Prévia" className="w-12 h-12 rounded object-cover border border-border" />}
+              </div>
+              <button onClick={addCampanhaAnterior}
+                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                <Plus size={14} /> Adicionar campanha
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {campanhasAnteriores.length === 0 ? (
+                <p className="text-muted-foreground text-sm">Nenhuma campanha anterior cadastrada.</p>
+              ) : (
+                campanhasAnteriores.map((c, i) => (
+                  <div key={i} className="flex gap-3 bg-card border border-border rounded-xl p-3 items-center">
+                    {c.imagem && <img src={c.imagem} alt={c.nome} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-foreground text-sm">{c.nome}</p>
+                      {c.descricao && <p className="text-xs text-muted-foreground">{c.descricao}</p>}
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{c.data}</p>
+                      {(c.cotaGanhadora || c.nomeGanhador) && (
+                        <p className="text-[11px] text-accent font-semibold mt-0.5">Cota {c.cotaGanhadora} — {c.nomeGanhador}</p>
+                      )}
+                    </div>
+                    <button onClick={() => removeCampanhaAnterior(i)} className="text-destructive hover:text-destructive/80">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
         {/* ─── SETTINGS TAB ─── */}
         {activeTab === "settings" && (
           <div className="space-y-6">
+            {/* ── Bloco: Identidade do site ── */}
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><Tag size={20} className="text-primary" /> Identidade do Site</h2>
+              <p className="text-sm text-muted-foreground">Nome exibido no topo de todas as páginas e nome da campanha.</p>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-muted-foreground">Nome do site (ex: Seu Sorteio | Campanhas)</label>
+                  <input value={siteTitle} onChange={(e) => setSiteTitle(e.target.value)}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" />
+                </div>
+                <button onClick={() => saveSetting("site_title", { texto: siteTitle }, "Nome do site")}
+                  className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                  <Save size={14} /> Salvar nome do site
+                </button>
+                <div className="pt-2 border-t border-border">
+                  <label className="text-xs text-muted-foreground">Nome da campanha (exibido em "Informações da compra" e na página Campanhas)</label>
+                  <input value={campaignName} onChange={(e) => setCampaignName(e.target.value)}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" />
+                </div>
+                <button onClick={() => saveSetting("campaign_name", { nome: campaignName }, "Nome da campanha")}
+                  className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                  <Save size={14} /> Salvar nome da campanha
+                </button>
+              </div>
+            </div>
+
+            {/* ── Bloco: Cards de quantidade ── */}
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold flex items-center gap-2"><ListOrdered size={20} className="text-primary" /> Cards de Quantidade</h2>
+                <button onClick={addQtyOption} disabled={quantityOptions.length >= 6}
+                  className="bg-secondary text-foreground px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 disabled:opacity-50">
+                  <Plus size={14} /> Adicionar card
+                </button>
+              </div>
+              <p className="text-sm text-muted-foreground">Botões "+N" da página inicial. Até 6 cards. Marque "popular" para destacar.</p>
+              <div className="space-y-2">
+                {quantityOptions.map((opt, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-secondary/50 rounded-lg p-2">
+                    <span className="text-xs text-muted-foreground w-6 text-center">#{i + 1}</span>
+                    <input type="number" value={opt.qty}
+                      onChange={(e) => updateQtyOption(i, { qty: parseInt(e.target.value) || 0 })}
+                      className="w-32 h-9 rounded border border-border bg-background px-3 text-sm text-foreground" placeholder="Quantidade" />
+                    <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+                      <input type="checkbox" checked={opt.popular}
+                        onChange={(e) => updateQtyOption(i, { popular: e.target.checked })} />
+                      Mais popular
+                    </label>
+                    <button onClick={() => removeQtyOption(i)} className="ml-auto text-destructive hover:text-destructive/80">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+                {quantityOptions.length === 0 && <p className="text-xs text-muted-foreground">Nenhum card. Adicione ao menos um.</p>}
+              </div>
+              <button onClick={() => saveSetting("quantity_options", quantityOptions, "Cards de quantidade")}
+                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                <Save size={14} /> Salvar cards
+              </button>
+            </div>
+
+            {/* ── Bloco: Banner de prêmio ── */}
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><Award size={20} className="text-primary" /> Banner de Prêmio</h2>
+              <p className="text-sm text-muted-foreground">Faixa de destaque na página inicial (ex: "São 20 mil reais direto no seu pix").</p>
+              <input value={prizeBanner} onChange={(e) => setPrizeBanner(e.target.value)}
+                className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" />
+              <button onClick={() => saveSetting("prize_banner", { texto: prizeBanner }, "Banner de prêmio")}
+                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                <Save size={14} /> Salvar banner
+              </button>
+            </div>
+
+            {/* ── Bloco: Total de cotas ── */}
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><Hash size={20} className="text-primary" /> Total de Cotas</h2>
+              <p className="text-sm text-muted-foreground">Quantidade de cotas comercializadas na campanha (mín. 100, máx. 9.999.999).</p>
+              <input type="number" min={100} max={9999999} value={totalCotas}
+                onChange={(e) => setTotalCotas(parseInt(e.target.value) || 0)}
+                className="w-48 h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" />
+              <div>
+                <button onClick={() => {
+                  if (totalCotas < 100 || totalCotas > 9999999) { toast.error("Informe entre 100 e 9.999.999 cotas."); return; }
+                  saveSetting("total_cotas", { quantidade: totalCotas }, "Total de cotas");
+                }}
+                  className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                  <Save size={14} /> Salvar total
+                </button>
+              </div>
+            </div>
+
+            {/* ── Bloco: Descrição / Regulamento ── */}
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><FileText size={20} className="text-primary" /> Descrição / Regulamento</h2>
+              <p className="text-sm text-muted-foreground">Texto exibido no bloco "Descrição/Regulamento" da página inicial.</p>
+              <textarea value={regulamento} onChange={(e) => setRegulamento(e.target.value)}
+                className="w-full rounded border border-border bg-secondary px-3 py-2 text-sm text-foreground min-h-[240px] font-mono" />
+              <button onClick={() => saveSetting("regulamento", { texto: regulamento }, "Regulamento")}
+                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                <Save size={14} /> Salvar regulamento
+              </button>
+            </div>
+
             {/* Progress Bar */}
             <div className="bg-card rounded-xl p-6 border border-border space-y-4">
               <div className="flex items-center justify-between">
@@ -839,7 +1163,7 @@ const Admin = () => {
                     }}
                     className="w-24 h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" />
                   <span className="text-sm text-muted-foreground">%</span>
-                  <button onClick={() => saveSiteSetting("progress_bar", progressBar)}
+                  <button onClick={() => saveSetting("progress_bar", progressBar, "Progress Bar")}
                     className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 ml-auto">
                     <Save size={14} /> Salvar
                   </button>
@@ -892,7 +1216,7 @@ const Admin = () => {
                     </div>
                   </div>
                 </div>
-                <button onClick={() => saveSiteSetting("banner", banner)}
+                <button onClick={() => saveSetting("banner", banner, "Mini Banner")}
                   className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
                   <Save size={14} /> Salvar
                 </button>

@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
+import SiteFooter from "./components/SiteFooter.tsx";
 
 const Checkout = lazy(() => import("./pages/Checkout.tsx"));
 const Resumo = lazy(() => import("./pages/Resumo.tsx"));
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/campanhas" element={<Campanhas />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <SiteFooter />
         </Suspense>
       </BrowserRouter>
     </TooltipProvider>

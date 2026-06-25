@@ -3,12 +3,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle, Loader2, QrCode, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo-onurb.webp";
+import { useSiteSettings } from "@/lib/siteSettings";
 
 const TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 
 const Pagamento = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const cfg = useSiteSettings();
   const { quantity, total, nome, celular } = (location.state as {
     quantity: number; total: string; nome: string; celular: string;
   }) || { quantity: 50, total: "5,00", nome: "", celular: "" };
@@ -185,7 +187,7 @@ const Pagamento = () => {
         <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border">
           <div className="max-w-lg mx-auto px-4 py-2 flex items-center gap-3">
             <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-            <h1 className="text-lg font-bold text-primary">Onurb Garage | Campanhas</h1>
+            <h1 className="text-lg font-bold text-primary">{cfg.siteTitle}</h1>
           </div>
         </header>
         <main className="max-w-lg mx-auto px-4 py-6 space-y-5">
@@ -237,7 +239,7 @@ const Pagamento = () => {
           <div className="max-w-lg mx-auto px-4 py-2 flex items-center gap-3">
             <button onClick={() => navigate(-1)} className="text-muted-foreground"><ArrowLeft size={20} /></button>
             <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-            <h1 className="text-lg font-bold text-primary"> Seu Sorteio | Campanhas</h1>
+            <h1 className="text-lg font-bold text-primary"> {cfg.siteTitle}</h1>
           </div>
         </header>
 
