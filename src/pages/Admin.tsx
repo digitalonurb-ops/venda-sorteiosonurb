@@ -933,6 +933,109 @@ const Admin = () => {
         {/* ─── SETTINGS TAB ─── */}
         {activeTab === "settings" && (
           <div className="space-y-6">
+            {/* ── Bloco: Identidade do site ── */}
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><Tag size={20} className="text-primary" /> Identidade do Site</h2>
+              <p className="text-sm text-muted-foreground">Nome exibido no topo de todas as páginas e nome da campanha.</p>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-muted-foreground">Nome do site (ex: Seu Sorteio | Campanhas)</label>
+                  <input value={siteTitle} onChange={(e) => setSiteTitle(e.target.value)}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" />
+                </div>
+                <button onClick={() => saveSetting("site_title", { texto: siteTitle }, "Nome do site")}
+                  className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                  <Save size={14} /> Salvar nome do site
+                </button>
+                <div className="pt-2 border-t border-border">
+                  <label className="text-xs text-muted-foreground">Nome da campanha (exibido em "Informações da compra" e na página Campanhas)</label>
+                  <input value={campaignName} onChange={(e) => setCampaignName(e.target.value)}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" />
+                </div>
+                <button onClick={() => saveSetting("campaign_name", { nome: campaignName }, "Nome da campanha")}
+                  className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                  <Save size={14} /> Salvar nome da campanha
+                </button>
+              </div>
+            </div>
+
+            {/* ── Bloco: Cards de quantidade ── */}
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold flex items-center gap-2"><ListOrdered size={20} className="text-primary" /> Cards de Quantidade</h2>
+                <button onClick={addQtyOption} disabled={quantityOptions.length >= 6}
+                  className="bg-secondary text-foreground px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 disabled:opacity-50">
+                  <Plus size={14} /> Adicionar card
+                </button>
+              </div>
+              <p className="text-sm text-muted-foreground">Botões "+N" da página inicial. Até 6 cards. Marque "popular" para destacar.</p>
+              <div className="space-y-2">
+                {quantityOptions.map((opt, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-secondary/50 rounded-lg p-2">
+                    <span className="text-xs text-muted-foreground w-6 text-center">#{i + 1}</span>
+                    <input type="number" value={opt.qty}
+                      onChange={(e) => updateQtyOption(i, { qty: parseInt(e.target.value) || 0 })}
+                      className="w-32 h-9 rounded border border-border bg-background px-3 text-sm text-foreground" placeholder="Quantidade" />
+                    <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+                      <input type="checkbox" checked={opt.popular}
+                        onChange={(e) => updateQtyOption(i, { popular: e.target.checked })} />
+                      Mais popular
+                    </label>
+                    <button onClick={() => removeQtyOption(i)} className="ml-auto text-destructive hover:text-destructive/80">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+                {quantityOptions.length === 0 && <p className="text-xs text-muted-foreground">Nenhum card. Adicione ao menos um.</p>}
+              </div>
+              <button onClick={() => saveSetting("quantity_options", quantityOptions, "Cards de quantidade")}
+                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                <Save size={14} /> Salvar cards
+              </button>
+            </div>
+
+            {/* ── Bloco: Banner de prêmio ── */}
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><Award size={20} className="text-primary" /> Banner de Prêmio</h2>
+              <p className="text-sm text-muted-foreground">Faixa de destaque na página inicial (ex: "São 20 mil reais direto no seu pix").</p>
+              <input value={prizeBanner} onChange={(e) => setPrizeBanner(e.target.value)}
+                className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" />
+              <button onClick={() => saveSetting("prize_banner", { texto: prizeBanner }, "Banner de prêmio")}
+                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                <Save size={14} /> Salvar banner
+              </button>
+            </div>
+
+            {/* ── Bloco: Total de cotas ── */}
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><Hash size={20} className="text-primary" /> Total de Cotas</h2>
+              <p className="text-sm text-muted-foreground">Quantidade de cotas comercializadas na campanha (mín. 100, máx. 9.999.999).</p>
+              <input type="number" min={100} max={9999999} value={totalCotas}
+                onChange={(e) => setTotalCotas(parseInt(e.target.value) || 0)}
+                className="w-48 h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" />
+              <div>
+                <button onClick={() => {
+                  if (totalCotas < 100 || totalCotas > 9999999) { toast.error("Informe entre 100 e 9.999.999 cotas."); return; }
+                  saveSetting("total_cotas", { quantidade: totalCotas }, "Total de cotas");
+                }}
+                  className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                  <Save size={14} /> Salvar total
+                </button>
+              </div>
+            </div>
+
+            {/* ── Bloco: Descrição / Regulamento ── */}
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><FileText size={20} className="text-primary" /> Descrição / Regulamento</h2>
+              <p className="text-sm text-muted-foreground">Texto exibido no bloco "Descrição/Regulamento" da página inicial.</p>
+              <textarea value={regulamento} onChange={(e) => setRegulamento(e.target.value)}
+                className="w-full rounded border border-border bg-secondary px-3 py-2 text-sm text-foreground min-h-[240px] font-mono" />
+              <button onClick={() => saveSetting("regulamento", { texto: regulamento }, "Regulamento")}
+                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                <Save size={14} /> Salvar regulamento
+              </button>
+            </div>
+
             {/* Progress Bar */}
             <div className="bg-card rounded-xl p-6 border border-border space-y-4">
               <div className="flex items-center justify-between">
