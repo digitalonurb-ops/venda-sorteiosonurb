@@ -48,7 +48,7 @@ const Admin = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [revenueFilter, setRevenueFilter] = useState<"day" | "week" | "month" | "total">("total");
   const [statusFilter, setStatusFilter] = useState<"all" | "paid" | "pending" | "cancelled">("all");
-  const [activeTab, setActiveTab] = useState<"dashboard" | "prizes" | "promotions" | "settings" | "lookup">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "prizes" | "promotions" | "settings" | "lookup" | "images" | "campanhas">("dashboard");
 
   // Lookup quota
   const [lookupNumero, setLookupNumero] = useState("");
@@ -77,6 +77,17 @@ const Admin = () => {
   // Site Settings
   const [progressBar, setProgressBar] = useState({ ativa: false, porcentagem: 50 });
   const [banner, setBanner] = useState({ ativa: false, texto: "Adquira Já!", cor: "#facc15", cor_texto: "#000000" });
+  const [siteTitle, setSiteTitle] = useState(DEFAULT_SITE_TITLE);
+  const [campaignName, setCampaignName] = useState(DEFAULT_CAMPAIGN_NAME);
+  const [prizeBanner, setPrizeBanner] = useState(DEFAULT_PRIZE_BANNER);
+  const [totalCotas, setTotalCotas] = useState<number>(DEFAULT_TOTAL_COTAS);
+  const [quantityOptions, setQuantityOptions] = useState<QuantityOption[]>(DEFAULT_QUANTITY_OPTIONS);
+  const [regulamento, setRegulamento] = useState(DEFAULT_REGULAMENTO);
+  const [bannerImages, setBannerImages] = useState<string[]>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [campanhasAnteriores, setCampanhasAnteriores] = useState<CampanhaAnterior[]>([]);
+  const [campForm, setCampForm] = useState<CampanhaAnterior>({ nome: "", descricao: "", imagem: "", data: "", cotaGanhadora: "", nomeGanhador: "" });
+  const [uploadingCampImg, setUploadingCampImg] = useState(false);
 
   const creds = () => {
     const token = sessionStorage.getItem("admin_token");
