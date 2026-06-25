@@ -936,8 +936,7 @@ const Admin = () => {
             <div className="bg-card rounded-xl p-6 border border-border space-y-4">
               <h2 className="text-lg font-bold flex items-center gap-2"><ImageIcon size={20} className="text-primary" /> Imagens da Campanha</h2>
               <p className="text-sm text-muted-foreground">
-                Envie até 6 imagens (JPG, PNG, WEBP). São exibidas no banner da página inicial e na campanha ativa em "Campanhas".
-                Use proporções comuns de celular (Android/iPhone), idealmente 16:9 ou 4:5.
+                Envie até 6 imagens da premiação atual nos formatos JPG, PNG, WEBP e proporção idealmente 16:9 ou 4:5.
               </p>
               <div className="flex items-center gap-3">
                 <label className={`bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 cursor-pointer ${(uploadingImage || bannerImages.length >= 6) ? "opacity-50 pointer-events-none" : ""}`}>
@@ -973,28 +972,28 @@ const Admin = () => {
           <div className="space-y-6">
             <div className="bg-card rounded-xl p-6 border border-border space-y-4">
               <h2 className="text-lg font-bold flex items-center gap-2"><Trophy size={20} className="text-primary" /> Nova Campanha Anterior</h2>
-              <p className="text-sm text-muted-foreground">Cadastre campanhas já encerradas. Elas aparecem na lista "Campanhas anteriores" da página Campanhas.</p>
+              <p className="text-sm text-muted-foreground">Cadastre campanhas já encerradas. Elas serão listadas na página inicial Campanhas.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label className="text-xs text-muted-foreground">Nome da campanha</label>
                   <input value={campForm.nome} onChange={(e) => setCampForm({ ...campForm, nome: e.target.value })}
-                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: Nivus Highline Zero KM" /></div>
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="ex: Nivus Highline Zero KM" /></div>
                 <div><label className="text-xs text-muted-foreground">Data</label>
                   <input value={campForm.data} onChange={(e) => setCampForm({ ...campForm, data: e.target.value })}
-                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: 04/04/2026 às 20:30" /></div>
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="ex: 04/04/2026 às 20:30" /></div>
                 <div className="sm:col-span-2"><label className="text-xs text-muted-foreground">Descrição (opcional)</label>
                   <input value={campForm.descricao} onChange={(e) => setCampForm({ ...campForm, descricao: e.target.value })}
                     className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" /></div>
                 <div><label className="text-xs text-muted-foreground">Cota ganhadora</label>
                   <input value={campForm.cotaGanhadora} onChange={(e) => setCampForm({ ...campForm, cotaGanhadora: e.target.value })}
-                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: 022911" /></div>
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="ex: 022911" /></div>
                 <div><label className="text-xs text-muted-foreground">Nome do ganhador</label>
                   <input value={campForm.nomeGanhador} onChange={(e) => setCampForm({ ...campForm, nomeGanhador: e.target.value })}
-                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: Mateus Vilarindo" /></div>
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="ex: Diogo Pereira" /></div>
               </div>
               <div className="flex items-center gap-3">
                 <label className={`bg-secondary text-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 cursor-pointer ${uploadingCampImg ? "opacity-50 pointer-events-none" : ""}`}>
                   {uploadingCampImg ? <RefreshCw size={14} className="animate-spin" /> : <Upload size={14} />}
-                  {uploadingCampImg ? "Enviando..." : "Imagem do card"}
+                  {uploadingCampImg ? "Enviando..." : "Imagem do prêmio"}
                   <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden"
                     onChange={(e) => { handleCampImageUpload(e.target.files?.[0] || null); e.target.value = ""; }} />
                 </label>
@@ -1002,7 +1001,7 @@ const Admin = () => {
               </div>
               <button onClick={addCampanhaAnterior}
                 className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
-                <Plus size={14} /> Adicionar campanha
+                <Plus size={14} /> Salvar
               </button>
             </div>
 
@@ -1063,13 +1062,13 @@ const Admin = () => {
             {/* ── Bloco: Cards de quantidade ── */}
             <div className="bg-card rounded-xl p-6 border border-border space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold flex items-center gap-2"><ListOrdered size={20} className="text-primary" /> Cards de Quantidade</h2>
+                <h2 className="text-lg font-bold flex items-center gap-2"><ListOrdered size={20} className="text-primary" /> Opções de Quantidade</h2>
                 <button onClick={addQtyOption} disabled={quantityOptions.length >= 6}
                   className="bg-secondary text-foreground px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 disabled:opacity-50">
                   <Plus size={14} /> Adicionar card
                 </button>
               </div>
-              <p className="text-sm text-muted-foreground">Botões "+N" da página inicial. Até 6 cards. Marque "popular" para destacar.</p>
+              <p className="text-sm text-muted-foreground">Botões "ADICIONAR" da página inicial. Marque "popular" para destacar.</p>
               <div className="space-y-2">
                 {quantityOptions.map((opt, i) => (
                   <div key={i} className="flex items-center gap-3 bg-secondary/50 rounded-lg p-2">
@@ -1091,7 +1090,7 @@ const Admin = () => {
               </div>
               <button onClick={() => saveSetting("quantity_options", quantityOptions, "Cards de quantidade")}
                 className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
-                <Save size={14} /> Salvar cards
+                <Save size={14} /> Salvar
               </button>
             </div>
 
@@ -1103,7 +1102,7 @@ const Admin = () => {
                 className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" />
               <button onClick={() => saveSetting("prize_banner", { texto: prizeBanner }, "Banner de prêmio")}
                 className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
-                <Save size={14} /> Salvar banner
+                <Save size={14} /> Salvar
               </button>
             </div>
 
