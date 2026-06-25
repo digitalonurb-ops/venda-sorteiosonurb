@@ -20,7 +20,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { usePublicData } from "@/hooks/usePublicData";
 import ImageCarousel from "@/components/ImageCarousel";
-import logo from "@/assets/logo-onurb.webp";
+import logo from "@/assets/logotopo.png";
 import { normalizeSettings } from "@/lib/siteSettings";
 
 const Index = () => {
