@@ -203,15 +203,24 @@ const Admin = () => {
     if (!isLoggedIn) return;
     if (activeTab === "prizes") loadPrizeQuotas();
     if (activeTab === "promotions") loadPromotions();
-    if (activeTab === "settings") loadSiteSettings();
+    if (activeTab === "settings" || activeTab === "images" || activeTab === "campanhas") loadSiteSettings();
   }, [activeTab, isLoggedIn]);
 
   const loadSiteSettings = async () => {
     try {
       const res = await invoke("get-site-settings");
       if (res?.settings) {
-        if (res.settings.progress_bar) setProgressBar(res.settings.progress_bar);
-        if (res.settings.banner) setBanner(res.settings.banner);
+        const s = res.settings;
+        if (s.progress_bar) setProgressBar(s.progress_bar);
+        if (s.banner) setBanner(s.banner);
+        if (s.site_title?.texto) setSiteTitle(s.site_title.texto);
+        if (s.campaign_name?.nome) setCampaignName(s.campaign_name.nome);
+        if (s.prize_banner?.texto) setPrizeBanner(s.prize_banner.texto);
+        if (s.total_cotas?.quantidade) setTotalCotas(Number(s.total_cotas.quantidade));
+        if (Array.isArray(s.quantity_options) && s.quantity_options.length > 0) setQuantityOptions(s.quantity_options);
+        if (s.regulamento?.texto?.trim()) setRegulamento(s.regulamento.texto);
+        if (Array.isArray(s.banner_images)) setBannerImages(s.banner_images);
+        if (Array.isArray(s.campanhas_anteriores)) setCampanhasAnteriores(s.campanhas_anteriores);
       }
     } catch {}
   };
@@ -220,6 +229,97 @@ const Admin = () => {
     try {
       await invoke("update-site-setting", { key, value });
     } catch {}
+  };
+
+  // Salva uma configuração e exibe confirmação (toast)
+  const saveSetting = async (key: string, value: any, label: string) => {
+    try {
+      await invoke("update-site-setting", { key, value });
+      toast.success(`${label} salvo com sucesso!`);
+      return true;
+    } catch {
+      toast.error(`Erro ao salvar ${label}. Tente novamente.`);
+      return false;
+    }
+  };
+
+  // Upload de imagem para o storage privado, retorna URL assinada de longa duração
+  const uploadToStorage = async (file: File): Promise<string> => {
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: upErr } = await supabase.storage
+      .from("campaign-images")
+      .upload(path, file, { upsert: true, contentType: file.type || undefined });
+    if (upErr) throw upErr;
+    const { data, error: signErr } = await supabase.storage
+      .from("campaign-images")
+      .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+    if (signErr || !data?.signedUrl) throw signErr || new Error("Falha ao gerar URL");
+    return data.signedUrl;
+  };
+
+  // ─── Imagens do banner ───
+  const handleBannerImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const remaining = 6 - bannerImages.length;
+    if (remaining <= 0) { toast.error("Máximo de 6 imagens atingido."); return; }
+    setUploadingImage(true);
+    try {
+      const toUpload = Array.from(files).slice(0, remaining);
+      const urls: string[] = [];
+      for (const f of toUpload) urls.push(await uploadToStorage(f));
+      const updated = [...bannerImages, ...urls];
+      setBannerImages(updated);
+      await saveSetting("banner_images", updated, "Imagens da campanha");
+    } catch {
+      toast.error("Erro ao enviar imagem. Faça login novamente se necessário.");
+    }
+    setUploadingImage(false);
+  };
+
+  const removeBannerImage = async (idx: number) => {
+    const updated = bannerImages.filter((_, i) => i !== idx);
+    setBannerImages(updated);
+    await saveSetting("banner_images", updated, "Imagens da campanha");
+  };
+
+  // ─── Campanhas anteriores ───
+  const handleCampImageUpload = async (file: File | null) => {
+    if (!file) return;
+    setUploadingCampImg(true);
+    try {
+      const url = await uploadToStorage(file);
+      setCampForm((f) => ({ ...f, imagem: url }));
+    } catch {
+      toast.error("Erro ao enviar imagem.");
+    }
+    setUploadingCampImg(false);
+  };
+
+  const addCampanhaAnterior = async () => {
+    if (!campForm.nome.trim()) { toast.error("Informe o nome da campanha."); return; }
+    const updated = [...campanhasAnteriores, campForm];
+    setCampanhasAnteriores(updated);
+    const ok = await saveSetting("campanhas_anteriores", updated, "Campanha anterior");
+    if (ok) setCampForm({ nome: "", descricao: "", imagem: "", data: "", cotaGanhadora: "", nomeGanhador: "" });
+  };
+
+  const removeCampanhaAnterior = async (idx: number) => {
+    const updated = campanhasAnteriores.filter((_, i) => i !== idx);
+    setCampanhasAnteriores(updated);
+    await saveSetting("campanhas_anteriores", updated, "Campanha anterior");
+  };
+
+  // ─── Cards de quantidade ───
+  const updateQtyOption = (idx: number, patch: Partial<QuantityOption>) => {
+    setQuantityOptions((prev) => prev.map((o, i) => (i === idx ? { ...o, ...patch } : o)));
+  };
+  const addQtyOption = () => {
+    if (quantityOptions.length >= 6) { toast.error("Máximo de 6 cards."); return; }
+    setQuantityOptions((prev) => [...prev, { qty: 100, popular: false }]);
+  };
+  const removeQtyOption = (idx: number) => {
+    setQuantityOptions((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const handleLogout = () => {
