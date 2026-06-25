@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingCart, Trophy } from "lucide-react";
 import logo from "@/assets/logotopo.png";
-import imgleve from "@/assets/imgleve.webp";
+import imgleve from "@/assets/novologoODfundopreto.png";
 import { useSiteSettings } from "@/lib/siteSettings";
 
 const Campanhas = () => {
