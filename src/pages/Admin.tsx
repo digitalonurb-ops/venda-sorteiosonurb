@@ -132,7 +132,7 @@ const Admin = () => {
       const res = await resp.json();
 
       if (res?.error) {
-        setError(`Erro: ${res.error}${res.debug ? ` (${res.debug})` : ""}`);
+        setError(`Erro: ${res.error}`);
       } else if (res?.success && res?.token) {
         setIsLoggedIn(true);
         sessionStorage.setItem("admin_token", res.token);

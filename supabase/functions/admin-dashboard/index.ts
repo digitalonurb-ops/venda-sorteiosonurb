@@ -305,7 +305,8 @@ Deno.serve(async (req) => {
     }
 
     if (!isAuthed) {
-      return new Response(JSON.stringify({ error: "Credenciais inválidas", debug: authDebug }), {
+      console.error("Admin auth failed:", authDebug);
+      return new Response(JSON.stringify({ error: "Credenciais inválidas" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
