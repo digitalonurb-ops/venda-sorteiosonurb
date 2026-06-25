@@ -679,7 +679,8 @@ const Admin = () => {
             </div>
 
             <div className="bg-card rounded-xl p-6 border border-border">
-              <h2 className="font-bold text-lg"><History size={20} className="text-accent" />Todas as Compras</h2>
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <h2 className="font-bold text-lg flex items-center gap-2"><History size={20} className="text-accent" />Todas as Compras</h2>
                 <div className="flex gap-1">
                   {(["all", "paid", "pending", "cancelled"] as const).map((f) => (
                     <button key={f} onClick={() => setStatusFilter(f)}
