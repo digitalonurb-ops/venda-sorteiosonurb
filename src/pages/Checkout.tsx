@@ -18,11 +18,10 @@ const Checkout = () => {
   const navigate = useNavigate();
   const cfg = useSiteSettings();
 
-  const { quantity, total } =
-    (location.state as { quantity: number; total: string }) || {
-      quantity: 50,
-      total: "5,00",
-    };
+  const { quantity, total } = (location.state as { quantity: number; total: string }) || {
+    quantity: 50,
+    total: "5,00",
+  };
 
   const [nome, setNome] = useState("");
   const [celular, setCelular] = useState("");
@@ -100,7 +99,7 @@ const Checkout = () => {
                 <input
                   type="tel"
                   inputMode="numeric"
-                  placeholder="(00) 00000-0000"
+                  placeholder="insira seu celular"
                   value={celular}
                   onChange={handlePhoneChange}
                   onBlur={handlePhoneBlur}
@@ -115,7 +114,7 @@ const Checkout = () => {
                 <User size={16} className="text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Seu nome completo"
+                  placeholder="insira seu nome"
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                   className="flex-1 bg-transparent text-foreground text-sm outline-none"
@@ -138,17 +137,13 @@ const Checkout = () => {
           </button>
         </main>
 
-         <footer className="max-w-lg mx-auto px-4 py-6 flex flex-col items-center gap-1.5 text-center">
-      <p className="text-xs text-muted-foreground">Desenvolvido por</p>
-      <img
-        src={novologoOD}
-        alt="Onurb Digital"
-        className="h-3 w-auto object-contain opacity-90"
-      />
-       </footer>
-       </div>
-     </>
-   );
- };
+        <footer className="max-w-lg mx-auto px-4 py-6 flex flex-col items-center gap-1.5 text-center">
+          <p className="text-xs text-muted-foreground">Desenvolvido por</p>
+          <img src={novologoOD} alt="Onurb Digital" className="h-3 w-auto object-contain opacity-90" />
+        </footer>
+      </div>
+    </>
+  );
+};
 
 export default Checkout;
