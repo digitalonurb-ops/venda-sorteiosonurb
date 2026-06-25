@@ -959,7 +959,7 @@ const Admin = () => {
                     }}
                     className="w-24 h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" />
                   <span className="text-sm text-muted-foreground">%</span>
-                  <button onClick={() => saveSiteSetting("progress_bar", progressBar)}
+                  <button onClick={() => saveSetting("progress_bar", progressBar, "Progress Bar")}
                     className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 ml-auto">
                     <Save size={14} /> Salvar
                   </button>
@@ -1012,7 +1012,7 @@ const Admin = () => {
                     </div>
                   </div>
                 </div>
-                <button onClick={() => saveSiteSetting("banner", banner)}
+                <button onClick={() => saveSetting("banner", banner, "Mini Banner")}
                   className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
                   <Save size={14} /> Salvar
                 </button>
