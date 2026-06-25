@@ -396,117 +396,12 @@ const addPackage = (qty: number) => {
           </button>
 
           {showRegulamento && (
-            <div className="px-4 pb-4 space-y-4 border-t border-border pt-3">
-              <div className="space-y-3">
-                <p className="text-xs font-bold text-primary uppercase">1. Participação</p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>1.1.</strong> Poderão se inscrever no sorteio apenas pessoas físicas com idade igual ou
-                  superior a 18 (dezoito) anos, residentes e domiciliadas em território nacional.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>1.2.</strong> Para validar a participação, o interessado deverá adquirir títulos no valor
-                  unitário de R$ 0,03 (três centavos), valor que poderá, eventualmente, ser oferecido em campanhas
-                  promocionais por preços menores. O pagamento deverá ser realizado em até 10 (dez) minutos após a
-                  geração do link de compra. Após esse prazo, o link perderá a validade automaticamente, sendo
-                  necessário gerar um novo para tentar novamente.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>1.3.</strong> A organização do sorteio se reserva o direito de cancelar ou invalidar qualquer
-                  participação que utilize métodos fraudulentos, manipule o sistema, ou comprometa a integridade e o bom
-                  andamento da ação.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>1.4.</strong> A participação implica total ciência e concordância com todos os termos e
-                  condições deste regulamento.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>1.5.</strong> É de total responsabilidade do participante fornecer dados corretos e
-                  atualizados no momento do cadastro, especialmente nome completo e número de telefone. A organização
-                  não se responsabiliza por erros que inviabilizem o contato com o ganhador. Caso não seja possível
-                  encontrá-lo por esse motivo, o prêmio será considerado automaticamente renunciado, sem possibilidade
-                  de nova tentativa de contato ou compensação.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>1.6.</strong> O participante deverá acessar a plataforma oficial www.onurbdigital.com.br para
-                  consultar os números adquiridos. O responsável pela promoção não tem controle ou responsabilidade
-                  sobre essa conferência.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>1.7.</strong> A organização não possui acesso para alterar as informações cadastrais do
-                  participante. Qualquer correção deverá ser feita pelo próprio usuário, através de sua conta na
-                  plataforma, ou mediante solicitação de suporte à equipe organizadora.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>1.8.</strong> Cabe exclusivamente ao participante conferir os números comprados e os dados
-                  fornecidos. Caso identifique alguma divergência após a realização do sorteio, a organização não será
-                  responsabilizada, estando isenta de qualquer obrigação de retificação ou ressarcimento, uma vez que o
-                  sorteio é baseado nas informações registradas no sistema no momento da apuração.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <p className="text-xs font-bold text-primary uppercase">2. Sorteio</p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>2.1.</strong> A data do sorteio será amplamente divulgada, após a venda de, no mínimo, 50%
-                  (cinquenta por cento) dos títulos disponibilizados.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>2.2.</strong> A apuração será baseada nos resultados da Loteria Federal da Caixa Econômica
-                  Federal.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>2.3.</strong> O número vencedor será determinado com base na combinação dos números sorteados
-                  pela Loteria Federal.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>2.4.</strong> A organização não fará alterações nos resultados da Loteria Federal, sendo o
-                  resultado público e imutável.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <p className="text-xs font-bold text-primary uppercase">3. Premiação</p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>3.1.</strong> O prêmio será de R$ 20.000,00 (vinte mil reais), pagos diretamente via PIX ao
-                  ganhador.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>3.2.</strong> O ganhador será notificado exclusivamente pelo telefone informado no cadastro.
-                  Não sendo possível o contato, o prêmio será considerado renunciado.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>3.3.</strong> O prêmio não é transferível a terceiros.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>3.4.</strong> O pagamento será realizado em até 3 (três) dias úteis após a confirmação do
-                  resultado.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <p className="text-xs font-bold text-primary uppercase">4. Disposições Gerais</p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>4.1.</strong> A organização se reserva o direito de alterar este regulamento, incluindo datas,
-                  valores e mecânica da ação, a qualquer momento, mediante ampla divulgação.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>4.2.</strong> Ao participar, o usuário autoriza o uso de seu nome e dados para fins de
-                  divulgação da campanha.
-                </p>
-                <p className="text-xs text-foreground leading-relaxed">
-                  <strong>4.3.</strong> Os dados pessoais fornecidos serão utilizados exclusivamente para fins da ação e
-                  não serão compartilhados com terceiros.
-                </p>
-              </div>
+            <div className="px-4 pb-4 border-t border-border pt-3">
+              <p className="text-xs text-foreground leading-relaxed whitespace-pre-line">{cfg.regulamento}</p>
             </div>
           )}
         </div>
       </main>
-
-      <footer className="max-w-lg mx-auto px-4 py-4 text-center">
-        <p className="text-xs text-muted-foreground">Desenvolvido por</p>
-        <p className="text-xs text-muted-foreground">ONURB DIGITAL</p>
-      </footer>
     </div>
   );
 };
