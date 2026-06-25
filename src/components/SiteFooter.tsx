@@ -7,7 +7,7 @@ const SiteFooter = () => {
       <img
         src={novologoOD}
         alt="Onurb Digital"
-        className="h-7 w-auto object-contain opacity-90"
+        className="h-3 w-auto object-contain opacity-90"
       />
     </footer>
   );
