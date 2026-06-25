@@ -3,12 +3,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle, Loader2, QrCode, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo-onurb.webp";
+import { useSiteSettings } from "@/lib/siteSettings";
 
 const TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 
 const Pagamento = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const cfg = useSiteSettings();
   const { quantity, total, nome, celular } = (location.state as {
     quantity: number; total: string; nome: string; celular: string;
   }) || { quantity: 50, total: "5,00", nome: "", celular: "" };

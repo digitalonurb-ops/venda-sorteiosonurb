@@ -3,10 +3,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo-onurb.webp";
+import { useSiteSettings } from "@/lib/siteSettings";
 
 const Resumo = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const cfg = useSiteSettings();
   const { quantity, total, nome, celular } = (location.state as {
     quantity: number;
     total: string;
@@ -86,7 +88,7 @@ const Resumo = () => {
               <ArrowLeft size={20} />
             </button>
             <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-            <h1 className="text-lg font-bold text-primary">Seu Sorteio | Campanhas</h1>
+            <h1 className="text-lg font-bold text-primary">{cfg.siteTitle}</h1>
           </div>
         </header>
 
@@ -108,7 +110,7 @@ const Resumo = () => {
             <div className="border-t border-border" />
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Campanha:</span>
-              <span className="text-foreground font-medium">20.000,00 no PIX</span>
+              <span className="text-foreground font-medium">{cfg.campaignName}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Quantidade de Cotas:</span>
