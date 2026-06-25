@@ -187,7 +187,7 @@ const Pagamento = () => {
         <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border">
           <div className="max-w-lg mx-auto px-4 py-2 flex items-center gap-3">
             <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-            <h1 className="text-lg font-bold text-primary">Onurb Garage | Campanhas</h1>
+            <h1 className="text-lg font-bold text-primary">{cfg.siteTitle}</h1>
           </div>
         </header>
         <main className="max-w-lg mx-auto px-4 py-6 space-y-5">
@@ -239,7 +239,7 @@ const Pagamento = () => {
           <div className="max-w-lg mx-auto px-4 py-2 flex items-center gap-3">
             <button onClick={() => navigate(-1)} className="text-muted-foreground"><ArrowLeft size={20} /></button>
             <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-            <h1 className="text-lg font-bold text-primary"> Seu Sorteio | Campanhas</h1>
+            <h1 className="text-lg font-bold text-primary"> {cfg.siteTitle}</h1>
           </div>
         </header>
 
