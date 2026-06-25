@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, User, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo-onurb.webp";
+import novologoOD from "@/assets/novologoOD.png";
 import { useSiteSettings } from "@/lib/siteSettings";
 
 const formatPhone = (value: string): string => {
@@ -137,12 +138,14 @@ const Checkout = () => {
           </button>
         </main>
 
-        <footer className="max-w-lg mx-auto px-4 py-4 text-center">
-          <p className="text-xs text-muted-foreground">Desenvolvido por</p>
-          <p className="text-xs text-muted-foreground">ONURB DIGITAL</p>
-        </footer>
-      </div>
-    </>
+         <footer className="max-w-lg mx-auto px-4 py-6 flex flex-col items-center gap-1.5 text-center">
+      <p className="text-xs text-muted-foreground">Desenvolvido por</p>
+      <img
+        src={novologoOD}
+        alt="Onurb Digital"
+        className="h-3 w-auto object-contain opacity-90"
+      />
+    </footer>
   );
 };
 
