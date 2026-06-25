@@ -5,7 +5,8 @@ import {
   Eye, EyeOff, LogOut, Users, CreditCard, TrendingUp, ShoppingCart,
   DollarSign, Trash2, Edit, ChevronLeft, Plus, X, Award, Megaphone,
   ToggleLeft, ToggleRight, Lock, Unlock, Save, Clock, RefreshCw,
-  BarChart3, Type, Palette, Search, PackageOpen,
+  BarChart3, Type, Palette, Search, PackageOpen, Check, Landmark, Cog,
+  History,
   Image as ImageIcon, Trophy, Upload, ListOrdered, FileText, Tag, Hash,
 } from "lucide-react";
 import {
@@ -607,13 +608,13 @@ const Admin = () => {
       {/* Tabs */}
       <div className="max-w-7xl mx-auto px-4 pt-4">
         <div className="flex gap-1 bg-secondary/50 rounded-lg p-1 overflow-x-auto">
-          {([["dashboard", "Painel Principal", <ShoppingCart size={14} key="d" />],
+          {([["dashboard", "Painel Principal", <Landmark size={14} key="d" />],
              ["prizes", "Cotas Premiadas", <Award size={14} key="p" />],
              ["promotions", "Promoções", <Megaphone size={14} key="m" />],
              ["lookup", "Buscar Cotas", <Search size={14} key="l" />],
              ["images", "Imagens", <ImageIcon size={14} key="i" />],
              ["campanhas", "Campanhas anteriores", <Trophy size={14} key="c" />],
-             ["settings", "Configurações", <Palette size={14} key="s" />]] as const).map(([key, label, icon]) => (
+             ["settings", "Configurações", <Cog size={14} key="s" />]] as const).map(([key, label, icon]) => (
             <button key={key} onClick={() => setActiveTab(key as any)}
               className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
                 activeTab === key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
@@ -632,7 +633,7 @@ const Admin = () => {
               <StatCard icon={<ShoppingCart size={20} />} label="Cotas Vendidas" value={String(vendidas)} color="green" />
               <StatCard icon={<PackageOpen size={20} />} label="Cotas Reservadas" value={String(reservadas)} color="yellow" />
               <StatCard icon={<CreditCard size={20} />} label="Cotas Disponíveis" value={String(disponiveis)} />
-              <StatCard icon={<Users size={20} />} label="Pedidos Pagos" value={String(data?.totalPaidOrders || 0)} />
+              <StatCard icon={<Check size={20} />} label="Pedidos Pagos" value={String(data?.totalPaidOrders || 0)} />
               <StatCard icon={<TrendingUp size={20} />} label="Total Pedidos" value={String(data?.totalOrders || 0)} />
             </div>
 
@@ -679,7 +680,7 @@ const Admin = () => {
 
             <div className="bg-card rounded-xl p-6 border border-border">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-bold text-lg">Todas as Compras</h2>
+                <h2 className="font-bold text-lg"><History size={20} className="text-accent" />Todas as Compras</h2>
                 <div className="flex gap-1">
                   {(["all", "paid", "pending", "cancelled"] as const).map((f) => (
                     <button key={f} onClick={() => setStatusFilter(f)}
