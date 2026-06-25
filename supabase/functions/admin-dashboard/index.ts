@@ -518,7 +518,12 @@ Deno.serve(async (req) => {
     // ─── SITE SETTINGS - UPDATE ───
     if (action === "update-site-setting") {
       const { key, value } = body;
-      await supabase.from("site_settings").update({ value, updated_at: new Date().toISOString() }).eq("key", key);
+      await supabase
+        .from("site_settings")
+        .upsert(
+          { key, value, updated_at: new Date().toISOString() },
+          { onConflict: "key" }
+        );
       return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
