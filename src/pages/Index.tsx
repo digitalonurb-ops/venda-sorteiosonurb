@@ -94,7 +94,7 @@ const addPackage = (qty: number) => {
   <div className="max-w-lg mx-auto px-4 py-2 flex items-center justify-between gap-3">
     <div className="flex items-center gap-3">
       <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-      <h1 className="text-lg font-bold text-primary">Seu Sorteio | Campanhas</h1>
+      <h1 className="text-lg font-bold text-primary">{cfg.siteTitle}</h1>
     </div>
     <button
       onClick={() => navigate("/campanhas")}
@@ -106,7 +106,7 @@ const addPackage = (qty: number) => {
 </header>
 
       <main className="max-w-lg mx-auto px-3 py-3 space-y-3">
-        <ImageCarousel banner={siteSettings.banner} />
+        <ImageCarousel banner={siteSettings.banner} images={cfg.bannerImages} />
 
         {/* Progress Bar */}
 {!hasLoaded ? (
