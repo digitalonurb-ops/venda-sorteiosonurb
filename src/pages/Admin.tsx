@@ -1248,7 +1248,7 @@ const PromoTimer = ({ ativadoEm, timerMinutos }: { ativadoEm: string; timerMinut
       setRemaining(`${h > 0 ? h + "h " : ""}${m}m ${s}s`);
     };
     update();
-    const iv = setInterval(update, 3000);
+    const iv = setInterval(update, 1000);
     return () => clearInterval(iv);
   }, [ativadoEm, timerMinutos]);
   return (
