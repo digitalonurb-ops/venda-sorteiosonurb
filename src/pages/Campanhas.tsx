@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingCart, Trophy } from "lucide-react";
-import logo from "@/assets/logo-onurb.webp";
+import logo from "@/assets/logotopo.png";
 import imgleve from "@/assets/imgleve.webp";
 import { useSiteSettings } from "@/lib/siteSettings";
 
