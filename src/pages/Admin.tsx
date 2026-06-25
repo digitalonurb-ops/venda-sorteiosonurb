@@ -350,8 +350,7 @@ const Admin = () => {
         return Date.now() - criado <= 10 * 60 * 1000;
       })
       .reduce((acc, o) => acc + o.quantidade, 0);
--   const disponiveis = Math.max(0, TOTAL_COTAS - vendidas - reservadas);
-+   const disponiveis = Math.max(0, totalCotas - vendidas - reservadas);
+    const disponiveis = Math.max(0, totalCotas - vendidas - reservadas);
     return { vendidas, reservadas, disponiveis };
   };
 
