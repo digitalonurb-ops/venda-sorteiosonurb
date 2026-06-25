@@ -930,6 +930,107 @@ const Admin = () => {
           </div>
         )}
 
+        {/* ─── IMAGES TAB ─── */}
+        {activeTab === "images" && (
+          <div className="space-y-6">
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><ImageIcon size={20} className="text-primary" /> Imagens da Campanha</h2>
+              <p className="text-sm text-muted-foreground">
+                Envie até 6 imagens (JPG, PNG, WEBP). São exibidas no banner da página inicial e na campanha ativa em "Campanhas".
+                Use proporções comuns de celular (Android/iPhone), idealmente 16:9 ou 4:5.
+              </p>
+              <div className="flex items-center gap-3">
+                <label className={`bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 cursor-pointer ${(uploadingImage || bannerImages.length >= 6) ? "opacity-50 pointer-events-none" : ""}`}>
+                  {uploadingImage ? <RefreshCw size={14} className="animate-spin" /> : <Upload size={14} />}
+                  {uploadingImage ? "Enviando..." : "Enviar imagens"}
+                  <input type="file" accept="image/png,image/jpeg,image/webp" multiple className="hidden"
+                    onChange={(e) => { handleBannerImageUpload(e.target.files); e.target.value = ""; }} />
+                </label>
+                <span className="text-xs text-muted-foreground">{bannerImages.length}/6</span>
+              </div>
+              {bannerImages.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Nenhuma imagem enviada ainda.</p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {bannerImages.map((url, i) => (
+                    <div key={i} className="relative group rounded-lg overflow-hidden border border-border">
+                      <img src={url} alt={`Banner ${i + 1}`} className="w-full aspect-video object-cover" />
+                      <button onClick={() => removeBannerImage(i)}
+                        className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full w-6 h-6 flex items-center justify-center">
+                        <X size={12} />
+                      </button>
+                      <span className="absolute bottom-1 left-1 bg-background/70 text-foreground text-[10px] px-1.5 py-0.5 rounded">#{i + 1}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ─── CAMPANHAS ANTERIORES TAB ─── */}
+        {activeTab === "campanhas" && (
+          <div className="space-y-6">
+            <div className="bg-card rounded-xl p-6 border border-border space-y-4">
+              <h2 className="text-lg font-bold flex items-center gap-2"><Trophy size={20} className="text-primary" /> Nova Campanha Anterior</h2>
+              <p className="text-sm text-muted-foreground">Cadastre campanhas já encerradas. Elas aparecem na lista "Campanhas anteriores" da página Campanhas.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div><label className="text-xs text-muted-foreground">Nome da campanha</label>
+                  <input value={campForm.nome} onChange={(e) => setCampForm({ ...campForm, nome: e.target.value })}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: Nivus Highline Zero KM" /></div>
+                <div><label className="text-xs text-muted-foreground">Data</label>
+                  <input value={campForm.data} onChange={(e) => setCampForm({ ...campForm, data: e.target.value })}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: 04/04/2026 às 20:30" /></div>
+                <div className="sm:col-span-2"><label className="text-xs text-muted-foreground">Descrição (opcional)</label>
+                  <input value={campForm.descricao} onChange={(e) => setCampForm({ ...campForm, descricao: e.target.value })}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" /></div>
+                <div><label className="text-xs text-muted-foreground">Cota ganhadora</label>
+                  <input value={campForm.cotaGanhadora} onChange={(e) => setCampForm({ ...campForm, cotaGanhadora: e.target.value })}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: 022911" /></div>
+                <div><label className="text-xs text-muted-foreground">Nome do ganhador</label>
+                  <input value={campForm.nomeGanhador} onChange={(e) => setCampForm({ ...campForm, nomeGanhador: e.target.value })}
+                    className="w-full h-9 rounded border border-border bg-secondary px-3 text-sm text-foreground" placeholder="Ex: Mateus Vilarindo" /></div>
+              </div>
+              <div className="flex items-center gap-3">
+                <label className={`bg-secondary text-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1 cursor-pointer ${uploadingCampImg ? "opacity-50 pointer-events-none" : ""}`}>
+                  {uploadingCampImg ? <RefreshCw size={14} className="animate-spin" /> : <Upload size={14} />}
+                  {uploadingCampImg ? "Enviando..." : "Imagem do card"}
+                  <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden"
+                    onChange={(e) => { handleCampImageUpload(e.target.files?.[0] || null); e.target.value = ""; }} />
+                </label>
+                {campForm.imagem && <img src={campForm.imagem} alt="Prévia" className="w-12 h-12 rounded object-cover border border-border" />}
+              </div>
+              <button onClick={addCampanhaAnterior}
+                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1">
+                <Plus size={14} /> Adicionar campanha
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {campanhasAnteriores.length === 0 ? (
+                <p className="text-muted-foreground text-sm">Nenhuma campanha anterior cadastrada.</p>
+              ) : (
+                campanhasAnteriores.map((c, i) => (
+                  <div key={i} className="flex gap-3 bg-card border border-border rounded-xl p-3 items-center">
+                    {c.imagem && <img src={c.imagem} alt={c.nome} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-foreground text-sm">{c.nome}</p>
+                      {c.descricao && <p className="text-xs text-muted-foreground">{c.descricao}</p>}
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{c.data}</p>
+                      {(c.cotaGanhadora || c.nomeGanhador) && (
+                        <p className="text-[11px] text-accent font-semibold mt-0.5">Cota {c.cotaGanhadora} — {c.nomeGanhador}</p>
+                      )}
+                    </div>
+                    <button onClick={() => removeCampanhaAnterior(i)} className="text-destructive hover:text-destructive/80">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
         {/* ─── SETTINGS TAB ─── */}
         {activeTab === "settings" && (
           <div className="space-y-6">
