@@ -31,7 +31,7 @@ const ImageCarousel = ({ banner, images }: { banner?: BannerSettings | null; ima
           key={i}
           src={img}
           alt="Campanha"
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-100 ${
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
             i === current ? "opacity-100" : "opacity-0"
           }`}
           width={512}
