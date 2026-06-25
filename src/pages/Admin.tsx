@@ -36,8 +36,6 @@ interface Promotion {
   created_at: string;
 }
 
-const TOTAL_COTAS = 10000;
-
 const Admin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState("");
@@ -206,6 +204,11 @@ const Admin = () => {
     if (activeTab === "settings" || activeTab === "images" || activeTab === "campanhas") loadSiteSettings();
   }, [activeTab, isLoggedIn]);
 
+    useEffect(() => {
+    if (!isLoggedIn) return;
+    loadSiteSettings();
+  }, [isLoggedIn]);
+
   const loadSiteSettings = async () => {
     try {
       const res = await invoke("get-site-settings");
@@ -337,8 +340,9 @@ const Admin = () => {
   const filteredOrders = data?.orders.filter((o) => statusFilter === "all" || o.status === statusFilter) || [];
 
   // ─── Cálculo de cotas no frontend ───
-  const calcCotas = () => {
-    if (!data) return { vendidas: 0, reservadas: 0, disponiveis: TOTAL_COTAS };
+ const calcCotas = () => {
+-   if (!data) return { vendidas: 0, reservadas: 0, disponiveis: TOTAL_COTAS };
++   if (!data) return { vendidas: 0, reservadas: 0, disponiveis: totalCotas };
     const vendidas = data.totalQuotasSold || 0;
     const reservadas = data.orders
       .filter((o) => {
@@ -347,7 +351,8 @@ const Admin = () => {
         return Date.now() - criado <= 10 * 60 * 1000;
       })
       .reduce((acc, o) => acc + o.quantidade, 0);
-    const disponiveis = Math.max(0, TOTAL_COTAS - vendidas - reservadas);
+-   const disponiveis = Math.max(0, TOTAL_COTAS - vendidas - reservadas);
++   const disponiveis = Math.max(0, totalCotas - vendidas - reservadas);
     return { vendidas, reservadas, disponiveis };
   };
 
