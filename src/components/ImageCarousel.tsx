@@ -20,7 +20,7 @@ const ImageCarousel = ({ banner, images }: { banner?: BannerSettings | null; ima
     if (imageList.length <= 1) return;
     const interval = setInterval(() => {
       setCurrent((c) => (c === imageList.length - 1 ? 0 : c + 1));
-    }, 2000);
+    }, 4000);
     return () => clearInterval(interval);
   }, [imageList.length]);
 
