@@ -145,8 +145,10 @@ const Checkout = () => {
         alt="Onurb Digital"
         className="h-3 w-auto object-contain opacity-90"
       />
-    </footer>
-  );
-};
+       </footer>
+       </div>
+     </>
+   );
+ };
 
 export default Checkout;
