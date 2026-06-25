@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   Eye, EyeOff, LogOut, Users, CreditCard, TrendingUp, ShoppingCart,
   DollarSign, Trash2, Edit, ChevronLeft, Plus, X, Award, Megaphone,
   ToggleLeft, ToggleRight, Lock, Unlock, Save, Clock, RefreshCw,
   BarChart3, Type, Palette, Search, PackageOpen,
+  Image as ImageIcon, Trophy, Upload, ListOrdered, FileText, Tag, Hash,
 } from "lucide-react";
+import {
+  DEFAULT_SITE_TITLE, DEFAULT_CAMPAIGN_NAME, DEFAULT_PRIZE_BANNER,
+  DEFAULT_TOTAL_COTAS, DEFAULT_QUANTITY_OPTIONS, DEFAULT_REGULAMENTO,
+  type QuantityOption, type CampanhaAnterior,
+} from "@/lib/siteSettings";
 
 // ─── Types ───
 interface Order {
