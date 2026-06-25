@@ -21,13 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { usePublicData } from "@/hooks/usePublicData";
 import ImageCarousel from "@/components/ImageCarousel";
 import logo from "@/assets/logo-onurb.webp";
-
-const quantityOptions = [
-  { qty: 50, popular: false },
-  { qty: 250, popular: true },
-  { qty: 500, popular: false },
-  { qty: 1000, popular: false },
-];
+import { normalizeSettings } from "@/lib/siteSettings";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -43,6 +37,8 @@ const Index = () => {
   const prizeQuotas = publicData?.prize_quotas ?? [];
   const activePromotions = publicData?.promotions ?? [];
   const siteSettings = publicData?.settings ?? {};
+  const cfg = normalizeSettings(siteSettings);
+  const quantityOptions = cfg.quantityOptions;
   const unitPrice = 0.03;
   const total = (quantity * unitPrice).toFixed(2).replace(".", ",");
 
