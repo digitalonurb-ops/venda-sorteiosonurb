@@ -608,6 +608,8 @@ const Admin = () => {
              ["prizes", "Cotas Premiadas", <Award size={14} key="p" />],
              ["promotions", "Promoções", <Megaphone size={14} key="m" />],
              ["lookup", "Buscar Cotas", <Search size={14} key="l" />],
+             ["images", "Imagens", <ImageIcon size={14} key="i" />],
+             ["campanhas", "Campanhas anteriores", <Trophy size={14} key="c" />],
              ["settings", "Configurações", <Palette size={14} key="s" />]] as const).map(([key, label, icon]) => (
             <button key={key} onClick={() => setActiveTab(key as any)}
               className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
