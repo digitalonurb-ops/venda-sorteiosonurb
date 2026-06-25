@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import imgleve from "@/assets/imgleve.webp";
+import imgleve from "@/assets/novologoODfundopreto.png";
 
 interface BannerSettings {
   ativa: boolean;
