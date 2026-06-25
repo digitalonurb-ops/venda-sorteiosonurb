@@ -36,7 +36,7 @@ interface Promotion {
   created_at: string;
 }
 
-const TOTAL_COTAS = 999999;
+const TOTAL_COTAS = 10000;
 
 const Admin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
