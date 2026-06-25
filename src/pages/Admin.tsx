@@ -154,6 +154,7 @@ const Admin = () => {
     try {
       const res = await invoke("dashboard");
       if (res) setData(res);
+      await loadSiteSettings();
     } catch (e: any) {
       if (e.message === "kkkk tente denovo pateta!") {
         sessionStorage.clear(); setIsLoggedIn(false);
@@ -338,7 +339,7 @@ const Admin = () => {
 
   // ─── Cálculo de cotas no frontend ───
   const calcCotas = () => {
-    if (!data) return { vendidas: 0, reservadas: 0, disponiveis: TOTAL_COTAS };
+    if (!data) return { vendidas: 0, reservadas: 0, disponiveis: totalCotas };
     const vendidas = data.totalQuotasSold || 0;
     const reservadas = data.orders
       .filter((o) => {
@@ -347,7 +348,7 @@ const Admin = () => {
         return Date.now() - criado <= 10 * 60 * 1000;
       })
       .reduce((acc, o) => acc + o.quantidade, 0);
-    const disponiveis = Math.max(0, TOTAL_COTAS - vendidas - reservadas);
+    const disponiveis = Math.max(0, totalCotas - vendidas - reservadas);
     return { vendidas, reservadas, disponiveis };
   };
 
