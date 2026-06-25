@@ -42,9 +42,9 @@ const Index = () => {
   const unitPrice = 0.03;
   const total = (quantity * unitPrice).toFixed(2).replace(".", ",");
 
-const addPackage = (qty: number) => {
-  setQuantity((prev) => Math.min(30000, prev + qty));
-};
+  const addPackage = (qty: number) => {
+    setQuantity((prev) => Math.min(30000, prev + qty));
+  };
 
   const handleParticipate = () => {
     navigate("/checkout", { state: { quantity, total } });
@@ -90,30 +90,29 @@ const addPackage = (qty: number) => {
 `}</style>
 
       {/* Header */}
-<header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border">
-  <div className="max-w-lg mx-auto px-4 py-2 flex items-center justify-between gap-3">
-    <div className="flex items-center gap-3">
-      <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
-      <h1 className="text-lg font-bold text-primary">{cfg.siteTitle}</h1>
-    </div>
-    <button
-      onClick={() => navigate("/campanhas")}
-      className="text-muted-foreground hover:text-foreground transition p-1"
-    >
-      <MoreVertical size={20} />
-    </button>
-  </div>
-</header>
+      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border">
+        <div className="max-w-lg mx-auto px-4 py-2 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <img src={logo} alt="Onurb Digital" className="h-10 w-10 object-contain" />
+            <h1 className="text-lg font-bold text-primary">{cfg.siteTitle}</h1>
+          </div>
+          <button
+            onClick={() => navigate("/campanhas")}
+            className="text-muted-foreground hover:text-foreground transition p-1"
+          >
+            <MoreVertical size={20} />
+          </button>
+        </div>
+      </header>
 
       <main className="max-w-lg mx-auto px-3 py-3 space-y-3">
         <ImageCarousel banner={siteSettings.banner} images={cfg.bannerImages} />
 
         {/* Progress Bar */}
-{!hasLoaded ? (
-  <Skeleton className="w-full h-6 rounded-lg" />
-) : siteSettings.progress_bar?.ativa ? (
-          <div className="relative w-full h-6 rounded-lg overflow-hidden"
-            style={{ background: "#0f2a1a" }}>
+        {!hasLoaded ? (
+          <Skeleton className="w-full h-6 rounded-lg" />
+        ) : siteSettings.progress_bar?.ativa ? (
+          <div className="relative w-full h-6 rounded-lg overflow-hidden" style={{ background: "#0f2a1a" }}>
             <div
               className="h-full rounded-lg transition-all duration-700 lightsaber-effect"
               style={{
@@ -141,7 +140,7 @@ const addPackage = (qty: number) => {
           <div className="fixed inset-0 z-[60] bg-black/60 flex items-center justify-center p-4">
             <div className="bg-card border border-border rounded-xl p-5 w-full max-w-sm space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-foreground font-semibold">Minhas Compras</h3>
+                <h3 className="text-foreground font-semibold">Buscar minhas Compras</h3>
                 <button onClick={() => setShowTitulos(false)} className="text-muted-foreground">
                   <X size={20} />
                 </button>
@@ -149,21 +148,21 @@ const addPackage = (qty: number) => {
               <p className="text-sm text-muted-foreground">Insira o número de celular</p>
               <div className="flex items-center gap-2 border border-border rounded-lg bg-background px-3 py-2">
                 <Phone size={16} className="text-muted-foreground" />
-<input
-  type="tel"
-  inputMode="numeric"
-  placeholder="(00) 00000-0000"
-  value={telefone}
-  onChange={(e) => {
-    const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
-    let formatted = "";
-    if (digits.length <= 2) formatted = digits.length ? `(${digits}` : "";
-    else if (digits.length <= 7) formatted = `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-    else formatted = `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
-    setTelefone(formatted);
-  }}
-  className="flex-1 bg-transparent text-foreground text-sm outline-none"
-/>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  placeholder="(00) 00000-0000"
+                  value={telefone}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+                    let formatted = "";
+                    if (digits.length <= 2) formatted = digits.length ? `(${digits}` : "";
+                    else if (digits.length <= 7) formatted = `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+                    else formatted = `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+                    setTelefone(formatted);
+                  }}
+                  className="flex-1 bg-transparent text-foreground text-sm outline-none"
+                />
               </div>
               <button
                 onClick={async () => {
@@ -228,15 +227,15 @@ const addPackage = (qty: number) => {
           </div>
         )}
 
-{/* Price */}
-{false && (
-  <div className="flex items-center justify-center gap-3">
-    <span className="text-sm text-muted-foreground">Somente</span>
-    <span className="bg-card border border-primary/30 text-primary font-bold text-lg px-4 py-1 rounded-lg">
-      R$ 0,03
-    </span>
-  </div>
-)}
+        {/* Price */}
+        {false && (
+          <div className="flex items-center justify-center gap-3">
+            <span className="text-sm text-muted-foreground">Somente</span>
+            <span className="bg-card border border-primary/30 text-primary font-bold text-lg px-4 py-1 rounded-lg">
+              R$ 0,03
+            </span>
+          </div>
+        )}
 
         {/* Promo Section */}
         <div className="space-y-2">
@@ -245,11 +244,11 @@ const addPackage = (qty: number) => {
             <span className="text-sm font-semibold text-primary">Promoção</span>
             <span className="text-xs text-muted-foreground">Compre agora e pague mais barato!</span>
           </div>
-            <div className="w-full flex items-center justify-center gap-3 bg-primary/10 border border-primary/30 rounded-lg px-4 py-1.5 pointer-events-none select-none">
+          <div className="w-full flex items-center justify-center gap-3 bg-primary/10 border border-primary/30 rounded-lg px-4 py-1.5 pointer-events-none select-none">
             <span className="text-sm text-muted-foreground line-through">R$ 0,05</span>
             <span className="text-xs text-muted-foreground">por apenas</span>
             <span className="text-base font-bold text-primary">R$ 0,03</span>
-              <span className="bg-primary/20 text-foreground text-[10px] px-2 py-0.5 rounded-full font-bold">-40%</span>
+            <span className="bg-primary/20 text-foreground text-[10px] px-2 py-0.5 rounded-full font-bold">-40%</span>
           </div>
         </div>
 
@@ -263,11 +262,11 @@ const addPackage = (qty: number) => {
         <p className="text-center text-sm text-muted-foreground">Quanto mais cotas, maior sua chance de ganhar!</p>
 
         {/* Active Promotions Banner - YELLOW tone */}
-{!hasLoaded ? (
-  <div className="space-y-2">
-    <Skeleton className="w-full h-12 rounded-lg" />
-  </div>
-) : activePromotions.length > 0 ? (
+        {!hasLoaded ? (
+          <div className="space-y-2">
+            <Skeleton className="w-full h-12 rounded-lg" />
+          </div>
+        ) : activePromotions.length > 0 ? (
           <div className="space-y-2">
             {activePromotions.map((promo, i) => (
               <div
@@ -343,12 +342,12 @@ const addPackage = (qty: number) => {
 
         {/* Prize Quotas Display */}
         {!hasLoaded ? (
-  <div className="space-y-2">
-    <Skeleton className="w-40 h-5 mx-auto rounded" />
-    <Skeleton className="w-full h-16 rounded-lg" />
-    <Skeleton className="w-full h-16 rounded-lg" />
-  </div>
-) : prizeQuotas.length > 0 ? (
+          <div className="space-y-2">
+            <Skeleton className="w-40 h-5 mx-auto rounded" />
+            <Skeleton className="w-full h-16 rounded-lg" />
+            <Skeleton className="w-full h-16 rounded-lg" />
+          </div>
+        ) : prizeQuotas.length > 0 ? (
           <div className="space-y-2">
             <div className="flex items-center gap-2 justify-center">
               <Award size={16} className="text-accent" />
