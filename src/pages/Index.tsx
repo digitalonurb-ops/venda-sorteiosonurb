@@ -256,7 +256,7 @@ const addPackage = (qty: number) => {
         {/* Banner prêmios */}
         <div className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground pointer-events-none select-none">
           <Star size={20} />
-          SÃO 20 MIL REAIS DIRETO NO SEU PIX!
+          {cfg.prizeBanner}
         </div>
 
         {/* Quantity text */}
