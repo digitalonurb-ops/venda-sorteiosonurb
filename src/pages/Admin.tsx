@@ -341,8 +341,7 @@ const Admin = () => {
 
   // ─── Cálculo de cotas no frontend ───
  const calcCotas = () => {
--   if (!data) return { vendidas: 0, reservadas: 0, disponiveis: TOTAL_COTAS };
-+   if (!data) return { vendidas: 0, reservadas: 0, disponiveis: totalCotas };
+    if (!data) return { vendidas: 0, reservadas: 0, disponiveis: totalCotas };
     const vendidas = data.totalQuotasSold || 0;
     const reservadas = data.orders
       .filter((o) => {
